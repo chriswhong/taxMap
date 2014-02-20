@@ -9,12 +9,13 @@ var mongoose = require('mongoose'),
 
 
 /**
- * List of Articles
+ * Get Tax Lots for bounding box
  */
 exports.all = function(req, res) {
     // TaxLot.find({billingbbl:1018880063}).exec(function(err, taxlots) {
     
     // expecting bbox=X1,Y1,X2,Y2 where X1,Y1 = TL, and X2,Y2 = BR ... X1>X2, Y1<Y2
+    // like: http://localhost:3000/taxlots?bbox=-73.980560,40.795342,-73.970861,40.785496
     console.log(req.query);
     if (!req.query.bbox) res.jsonp({});
     var bbox = req.query.bbox.split(',').map(function (e) { return parseFloat(e); });
@@ -33,7 +34,43 @@ exports.all = function(req, res) {
                 status: 500
             });
         } else {
-            res.jsonp(taxlots);
+
+            res.jsonp(makeGeoJson(taxlots));
         }
     });
+}
+
+function makeGeoJson(taxlots) {
+
+    var geoJson = new Object;
+    var counter = 0;
+
+    geoJson.type = "FeatureCollection";
+    geoJson.features = [];
+
+    taxlots.forEach(function(taxlot){
+
+        //convert mongoose document to Object
+        taxlot = taxlot.toObject();
+        console.log(taxlot);
+
+        var properties = new Object;
+        properties.billingbbl = taxlot.billingbbl;
+        properties.ownerName = taxlot.ownerName;
+        properties.propertyAddress = taxlot.propertyAddress;
+        properties.taxClass = taxlot.taxClass;
+        properties.years = taxlot.years;
+
+        var feature = new Object;
+        feature.type = "Feature";
+        feature.id = counter;
+        feature.properties = properties;
+        feature.geometry = taxlot.geometry;
+
+        geoJson.features.push(feature);
+        counter++;
+
+    });
+
+    return geoJson;
 }
