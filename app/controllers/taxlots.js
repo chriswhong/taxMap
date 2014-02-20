@@ -14,27 +14,34 @@ var mongoose = require('mongoose'),
 exports.all = function(req, res) {
     // TaxLot.find({billingbbl:1018880063}).exec(function(err, taxlots) {
     
-    // expecting bbox=X1,Y1,X2,Y2 where X1,Y1 = TL, and X2,Y2 = BR ... X1>X2, Y1<Y2
-    // like: http://localhost:3000/taxlots?bbox=-73.980560,40.795342,-73.970861,40.785496
-    console.log(req.query);
+    // expecting bbox=bottom,left,top,right 
+    // like: http://localhost:3000/taxlots?bbox=40.785496,-73.980560,40.795342,-73.970861
+
+
+    //console.log(req.query);
     if (!req.query.bbox) res.jsonp({});
     var bbox = req.query.bbox.split(',').map(function (e) { return parseFloat(e); });
-    var topLeft = [bbox[0], bbox[1]];
-    var topRight = [bbox[2], bbox[1]];
-    var botRight = [bbox[2], bbox[3]];
-    var botLeft = [bbox[0], bbox[3]];
+    //var topLeft = [bbox[1], bbox[2]];
+    //var topRight = [bbox[3], bbox[2]];
+    //var botRight = [bbox[3], bbox[0]];
+    //var botLeft = [bbox[1], bbox[0]];
 
-    console.log(topLeft, topRight, botRight, botLeft);
+    var topLeft = [bbox[2], bbox[1]];
+    var topRight = [bbox[2], bbox[3]];
+    var botRight = [bbox[0], bbox[3]];
+    var botLeft = [bbox[0], bbox[1]];
+
+    //console.log(topLeft, topRight, botRight, botLeft);
 
     TaxLot.find({"geometry":{"$geoWithin":{"$geometry":{type:"Polygon",coordinates:[[topLeft, topRight, botRight, botLeft, topLeft]]}}}}).exec(function(err, taxlots) {
 
-        console.log("called all");
+        //console.log("called all");
         if (err) {
             res.render('error', {
                 status: 500
             });
         } else {
-
+            res.header("Access-Control-Allow-Origin", "*");
             res.jsonp(makeGeoJson(taxlots));
         }
     });
@@ -52,7 +59,7 @@ function makeGeoJson(taxlots) {
 
         //convert mongoose document to Object
         taxlot = taxlot.toObject();
-        console.log(taxlot);
+        //console.log(taxlot);
 
         var properties = new Object;
         properties.billingbbl = taxlot.billingbbl;
