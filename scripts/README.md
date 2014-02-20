@@ -15,5 +15,34 @@ Setting up MongoDB
 
 TODO: Write mergeCondoBBLs.js to append condo tax data to corresponding billingBBL in Mongo
 
+Mongo Schema:
 
+{
+	geometry:,
+	plutodata:{}; //Pluto Data
+	billingbbl:xxxxxxxxxx,
+	ownerName:Joe Schmoe,
+	propertyAddress:,
+	taxClass:,
+	years:[
+			{
+				taxYear:1314,
+				estimatedMarketValue:,
+				assessedValue:,
+				taxRate:,
+				taxBefore:,
+				annualTax:,
+				condoUnits:[
+					{
+						condobbl:,
+						estimatedMarketValue:,
+						assessedValue:,
+						taxRate:,
+						taxBefore:,
+						annualTax:
+					}
 
+				]
+			}
+	]
+}
