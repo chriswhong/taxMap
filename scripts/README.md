@@ -16,7 +16,7 @@ Setting up MongoDB
 TODO: Write mergeCondoBBLs.js to append condo tax data to corresponding billingBBL in Mongo
 
 Mongo Schema:
-
+```json
 {
 	geometry:,
 	plutodata:{}; //Pluto Data
@@ -46,3 +46,4 @@ Mongo Schema:
 			}
 	]
 }
+```
