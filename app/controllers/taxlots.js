@@ -33,7 +33,23 @@ exports.all = function(req, res) {
                 status: 500
             });
         } else {
-            res.jsonp(taxlots);
+
+            var features = taxlots.map(function (e) {
+                return {
+                    id: e._id,
+                    geometry: e.geometry,
+                    properties: {
+                        billingbbl: e.billingbbl,
+                        ownerName: e.ownerName,
+                        plutoData: e.plutoData,
+                        propertyAddress: e.propertyAddress,
+                        taxClass: e.taxClass,
+                        years: e.years
+                    }
+                };
+            });
+
+            res.jsonp(features);
         }
     });
 }
