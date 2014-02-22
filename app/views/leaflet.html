@@ -4,11 +4,26 @@
   <title>Leaflet Quick Start Guide Example</title>
   <meta charset="utf-8" />
 
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+    <style>
+        path{
+            stroke:#000;
+        }
+
+        .tooltip {
+            position: fixed;
+            top: 10px;
+            left: 50px;
+            background: #fff;
+            padding: 10px;
+        }
+    </style>
+
 </head>
 <body>
   <div id="map"></div>
@@ -25,50 +40,102 @@
     </div>
   </div>
 
+<script src="js/leaflet.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+<script>
 
-
-  <script src="js/leaflet.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script>
-
+    var UNDEFINEDCLR = '#000';
+    var ZEROCLR = '#F00';
+    var num_format = d3.format(",");
     var map = L.map('map').setView([40.78233,-73.97919], 16);
 
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-      maxZoom: 20,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48569/256/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
     }).addTo(map);
 
+    var svg = d3.select(map.getPanes().overlayPane).append("svg")
+            .attr('width', window.screen.width).attr('height', window.screen.height),
+            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+    var transform = d3.geo.transform({point: projectPoint}),
+             path = d3.geo.path().projection(transform);
 
     var popup = L.popup();
 
     function onMapClick(e) {
-      popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
+        popup.setLatLng(e.latlng)
+             .setContent("You clicked the map at " + e.latlng.toString())
+             .openOn(map);
     }
 
     map.on('click', onMapClick);
 
-  
     map.on('dragend', function (e) {
-      updatePolygons();
+        updatePolygons();
     });
 
     map.on('zoomend', function (e) {
-      updatePolygons();
+        updatePolygons();
     });
 
+    var color = d3.scale.ordinal();
+
     function updatePolygons(){
-      var bboxString = map.getBounds().toBBoxString();
-      console.log(bboxString);
-      $.get("http://localhost:3000/taxlots?bbox=" + bboxString,function(data,status){
-          console.log(data);
-          console.log(status);
+        var bboxString = map.getBounds().toBBoxString();
+
+        svg.attr('top','0px');
+        d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
+
+            color.domain((function (data) {
+                return Array.prototype.map.call(data, function(d) {
+                     if(d.properties && d.properties.years) {
+                        return d.properties.years[0].annualTax;
+                     }
+
+                    return 0;
+                });
+            })(data.features)).range(colorbrewer.Blues[9]);
+
+            var feature = g.selectAll("path")
+                    .data(data.features)
+                    .enter()
+                    .append("path")
+                    .attr('fill', function (d) {
+                        if(d.properties && d.properties.years) {
+
+                            if (d.properties.years[0].annualTax === 0) {
+                                return ZEROCLR;
+                            }
+
+                            return (d.properties.years[0].annualTax) ? color(d.properties.years[0].annualTax) : UNDEFINEDCLR;
+                        }
+
+                        return UNDEFINEDCLR;
+                    });
+
+
+            feature.attr("d", path);
+            feature.on('mouseover', function (d) {
+                var val = 0;
+                if (d.properties && d.properties.years && d.properties.years[0].annualTax) {
+                        val = d.properties.years[0].annualTax;
+                }
+                $('.tooltip #val').html('$' + num_format(val));
+            });
         });
     }
 
-  </script>
+    function projectPoint(x, y) {
+      var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+      this.stream.point(point.x, point.y);
+    }
+</script>
 
+<div class="tooltip">
+    <span id="val"></span>
+</div>
 </body>
 </html>
