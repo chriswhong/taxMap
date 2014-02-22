@@ -17,14 +17,8 @@ exports.all = function(req, res) {
     // expecting bbox=bottom,left,top,right 
     // like: http://localhost:3000/taxlots?bbox=40.785496,-73.980560,40.795342,-73.970861
 
-
-    //console.log(req.query);
     if (!req.query.bbox) res.jsonp({});
     var bbox = req.query.bbox.split(',').map(function (e) { return parseFloat(e); });
-    //var topLeft = [bbox[1], bbox[2]];
-    //var topRight = [bbox[3], bbox[2]];
-    //var botRight = [bbox[3], bbox[0]];
-    //var botLeft = [bbox[1], bbox[0]];
 
     var topLeft = [bbox[2], bbox[1]];
     var topRight = [bbox[2], bbox[3]];
