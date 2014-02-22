@@ -10,7 +10,7 @@ var express = require('express'),
     helpers = require('view-helpers'),
     config = require('./config');
 
-module.exports = function(app, passport, db) {
+module.exports = function(app, db) {
     app.set('showStackError', true);
 
     // Prettify HTML
@@ -66,10 +66,6 @@ module.exports = function(app, passport, db) {
 
         // Dynamic helpers
         app.use(helpers(config.app.name));
-
-        // Use passport session
-        app.use(passport.initialize());
-        app.use(passport.session());
 
         // Connect flash for flash messages
         app.use(flash());
