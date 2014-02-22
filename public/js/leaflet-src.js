@@ -150,7 +150,7 @@ L.Util = {
 		return (Object.prototype.toString.call(obj) === '[object Array]');
 	},
 
-	emptyImageUrl: 'data:img/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+	emptyImageUrl: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
 };
 
 (function () {

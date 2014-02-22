@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet Quick Start Guide Example</title>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/leaflet.css" />
+</head>
+<body>
+  <div id="map" style="width: 600px; height: 400px"></div>
+
+  <script src="js/leaflet.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script>
+
+    var map = L.map('map').setView([40.78233,-73.97919], 16);
+
+    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+      maxZoom: 20,
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    }).addTo(map);
+
+
+    var popup = L.popup();
+
+    function onMapClick(e) {
+      popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+    }
+
+    map.on('click', onMapClick);
+
+  
+    map.on('dragend', function (e) {
+      updatePolygons();
+    });
+
+    map.on('zoomend', function (e) {
+      updatePolygons();
+    });
+
+    function updatePolygons(){
+      var bboxString = map.getBounds().toBBoxString();
+      console.log(bboxString);
+      $.get("http://localhost:3000/taxlots?bbox=" + bboxString,function(data,status){
+          console.log(data);
+          console.log(status);
+        });
+    }
+
+  </script>
+</body>
+</html>
