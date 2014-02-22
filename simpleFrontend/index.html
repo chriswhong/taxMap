@@ -8,21 +8,35 @@
 
 	<link rel="stylesheet" href="leaflet.css" />
 </head>
+<style>
+path{
+	fill:#555;
+	stroke:#000;
+}
+</style>
 <body>
 	<div id="map" style="width: 600px; height: 400px"></div>
 
 	<script src="leaflet.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script>
 
 		var map = L.map('map').setView([40.78233,-73.97919], 16);
+
+		
+
 
 		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			maxZoom: 20,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
 		}).addTo(map);
 
+		var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+   		g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
+		var transform = d3.geo.transform({point: projectPoint}),
+	    path = d3.geo.path().projection(transform);
 
 		var popup = L.popup();
 
@@ -44,14 +58,65 @@
 			updatePolygons();
 		});
 
+		map.on('viewreset', reset);
+
+	
+
 		function updatePolygons(){
 			var bboxString = map.getBounds().toBBoxString();
-			console.log(bboxString);
-			$.get("http://localhost:3000/taxlots?bbox=" + bboxString,function(data,status){
-    			console.log(data);
-    			console.log(status);
+			//console.log(bboxString);
+			//$.get("http://localhost:3000/taxlots?bbox=" + bboxString,function(data,status){
+    			//console.log(data);
+    			//console.log(status);
+
+    			
+
+  			//});
+
+			
+
+  			d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
+  				
+  				
+	      		bounds = path.bounds(data.features);
+
+	      		console.log(data.features);
+
+  				var feature = g.selectAll("path")
+      				.data(data.features)
+      				.enter()
+      				.append("path");
+
+
+      			feature.attr("d", path);
+
   			});
 		}
+
+		function reset() {
+	    	bounds = path.bounds(data.features);
+
+
+	    	var topLeft = bounds[0],
+	    	bottomRight = bounds[1];
+
+	    	console.log("Bounds " + bottomRight);
+
+	    	svg .attr("width", bottomRight[0] - topLeft[0])
+	    	.attr("height", bottomRight[1] - topLeft[1])
+	    	.style("left", topLeft[0] + "px")
+	    	.style("top", topLeft[1] + "px");
+
+	    	g   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+	    	feature.attr("d", path);
+    	}
+
+
+		function projectPoint(x, y) {
+	    	var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+	    	this.stream.point(point.x, point.y);
+    	}
 
 	</script>
 </body>
