@@ -6,3 +6,27 @@ html, body, #map {
     height: 100%;
     width: 100%;
 }
+
+#sidebar {
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    right: 0;
+    width: 20%;
+    font-size: 12px;
+}
+
+.tabs {
+    background-color: #e8e8e8;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+
+#taxTab {
+    height: 100%
+}
+
+.tabTitle {
+  text-align: center;
+}

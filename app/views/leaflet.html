@@ -11,8 +11,15 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- <div id="map" style="width: 600px; height: 400px"></div> -->
   <div id="map"></div>
+
+  <div id="sidebar">
+    <div id="taxTab" class="tabs">
+      <h2 class="tabTitle">Tax Stuff</h2>
+    </div>
+  </div>
+
+
 
   <script src="js/leaflet.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -56,5 +63,16 @@
     }
 
   </script>
+
+  <script>
+
+  // Need to grab data from the server every time you hover over a building block lot
+  // comes from d3 mouseover on the svg, then I can select the tab element and update the value of specific items
+  // LIST OF DATA FIELDS:
+  // Address, OWner NAme, taxClass, annualTax, taxRate, estimatedValue
+  // Then display that data on the sidebar
+
+  </script>
+
 </body>
 </html>
