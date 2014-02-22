@@ -6,20 +6,22 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../../simpleFrontend/leaflet.css" />
+    <link rel="stylesheet" href="/css/leaflet.css" />
 </head>
 <style>
     path{
-        fill:#555;
         stroke:#000;
     }
+
+    svg { width: 600px; }
 </style>
 <body>
 <div id="map" style="width: 600px; height: 400px"></div>
 
-<script src="../../simpleFrontend/leaflet.js"></script>
+<script src="/js/leaflet.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 <script>
 
     var map = L.map('map').setView([40.78233,-73.97919], 16);
@@ -32,7 +34,6 @@
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-   debugger;
     var transform = d3.geo.transform({point: projectPoint}),
             path = d3.geo.path().projection(transform);
 
@@ -58,32 +59,38 @@
 
     map.on('viewreset', reset);
 
-
+    var color = d3.scale.ordinal();
 
     function updatePolygons(){
         var bboxString = map.getBounds().toBBoxString();
-        //console.log(bboxString);
-        //$.get("http://localhost:3000/taxlots?bbox=" + bboxString,function(data,status){
-        //console.log(data);
-        //console.log(status);
-
-
-
-        //});
-
-
 
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
 
             bounds = path.bounds(data.features);
 
-            console.log(data.features);
+
+            color.domain((function (data) {
+                return Array.prototype.map.call(data, function(d) {
+                     if(d.properties && d.properties.years) {
+                        return d.properties.years[0].annualTax;
+                     }
+
+                    return 0;
+                });
+            })(data.features)).range(colorbrewer.Blues[9]);
 
             var feature = g.selectAll("path")
                     .data(data.features)
                     .enter()
-                    .append("path");
+                    .append("path")
+                    .attr('fill', function (d) {
+                        if(d.properties && d.properties.years) {
+                            return color(d.properties.years[0].annualTax || 0);
+                        }
+
+                        return color(0);
+                    });
 
 
             feature.attr("d", path);
