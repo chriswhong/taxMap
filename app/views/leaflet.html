@@ -16,6 +16,12 @@
   <div id="sidebar">
     <div id="taxTab" class="tabs">
       <h2 class="tabTitle">Tax Stuff</h2>
+      <p id="address">Address: <span class="taxData"></span></p>
+      <p id="ownerName">Owner Name: <span class="taxData"></span></p>
+      <p id="taxClass">Tax Class: <span class="taxData"></span></p>
+      <p id="annualTax">Annual Tax: <span class="taxData"></span></p>
+      <p id="taxRate">Tax Rate: <span class="taxData"></span></p>
+      <p id="estimatedValue">Estimated Value: <span class="taxData"></span></p>
     </div>
   </div>
 
@@ -61,16 +67,6 @@
           console.log(status);
         });
     }
-
-  </script>
-
-  <script>
-
-  // Need to grab data from the server every time you hover over a building block lot
-  // comes from d3 mouseover on the svg, then I can select the tab element and update the value of specific items
-  // LIST OF DATA FIELDS:
-  // Address, OWner NAme, taxClass, annualTax, taxRate, estimatedValue
-  // Then display that data on the sidebar
 
   </script>
 
