@@ -27,8 +27,8 @@ exports.all = function(req, res) {
 
     //console.log(topLeft, topRight, botRight, botLeft);
 
-    TaxLot.find({"geometry":{"$geoWithin":{"$geometry":{type:"Polygon",coordinates:[[topLeft, topRight, botRight, botLeft, topLeft]]}}}}).exec(function(err, taxlots) {
-
+  //  TaxLot.find({"geometry":{"$geoWithin":{"$geometry":{type:"Polygon",coordinates:[[topLeft, topRight, botRight, botLeft, topLeft]]}}}}).exec(function(err, taxlots) {
+      TaxLot.find({"geometry":{"$geoIntersects":{"$geometry":{type:"Polygon",coordinates:[[topLeft, topRight, botRight, botLeft, topLeft]]}}}}).exec(function(err, taxlots) {
         //console.log("called all");
         if (err) {
             res.render('error', {

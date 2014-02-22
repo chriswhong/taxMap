@@ -4,63 +4,62 @@
     <title>Leaflet Quick Start Guide Example</title>
     <meta charset="utf-8" />
 
-<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="/css/leaflet.css" />
-=======
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
->>>>>>> master
+    <style>
+        path{
+            stroke:#000;
+        }
+
+        .tooltip {
+            position: fixed;
+            top: 10px;
+            left: 50px;
+            background: #fff;
+            padding: 10px;
+        }
+    </style>
+
 </head>
-<style>
-    path{
-        stroke:#000;
-    }
-
-    svg { width: 600px; }
-</style>
 <body>
-<<<<<<< HEAD
-<div id="map" style="width: 600px; height: 400px"></div>
-=======
-  <!-- <div id="map" style="width: 600px; height: 400px"></div> -->
-  <div id="map"></div>;
->>>>>>> master
-
+  <div id="map"></div>
 <script src="/js/leaflet.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 <script>
 
+    var UNDEFINEDCLR = '#000';
+    var ZEROCLR = '#F00';
+    var num_format = d3.format(",");
     var map = L.map('map').setView([40.78233,-73.97919], 16);
 
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48569/256/{z}/{x}/{y}.png', {
         maxZoom: 20,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
     }).addTo(map);
 
-    var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+    var svg = d3.select(map.getPanes().overlayPane).append("svg")
+                .attr('width', window.screen.width).attr('height', window.screen.height),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
     var transform = d3.geo.transform({point: projectPoint}),
-            path = d3.geo.path().projection(transform);
+             path = d3.geo.path().projection(transform);
 
     var popup = L.popup();
 
     function onMapClick(e) {
-        popup
-                .setLatLng(e.latlng)
-                .setContent("You clicked the map at " + e.latlng.toString())
-                .openOn(map);
+        popup.setLatLng(e.latlng)
+             .setContent("You clicked the map at " + e.latlng.toString())
+             .openOn(map);
     }
 
     map.on('click', onMapClick);
-
 
     map.on('dragend', function (e) {
         updatePolygons();
@@ -77,11 +76,29 @@
     function updatePolygons(){
         var bboxString = map.getBounds().toBBoxString();
 
+        svg.attr('top','0px');
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
-
-            bounds = path.bounds(data.features);
-
+//            var bounds = path.bounds(
+//                    (function(data) {
+//                        console.log(data);
+//                        return Array.prototype.map.call(data, function(d) {
+//                                console.log(data.features.geometry);
+//                                return data.features.geometry;
+//                            });
+//                    })(data)
+//            );
+//
+//            var topLeft = bounds[0],
+//                bottomRight = bounds[1];
+//
+//            console.log("Bounds ", bounds);
+//
+//            svg .attr("width", bottomRight[0] - topLeft[0])
+//                    .attr("height", bottomRight[1] - topLeft[1])
+//                    .style("left", topLeft[0] + "px")
+//                    .style("top", topLeft[1] + "px");
+//            g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
             color.domain((function (data) {
                 return Array.prototype.map.call(data, function(d) {
@@ -99,35 +116,36 @@
                     .append("path")
                     .attr('fill', function (d) {
                         if(d.properties && d.properties.years) {
-                            return color(d.properties.years[0].annualTax || 0);
+
+                            if (d.properties.years[0].annualTax === 0) {
+                                return ZEROCLR;
+                            }
+
+                            return (d.properties.years[0].annualTax) ? color(d.properties.years[0].annualTax) : UNDEFINEDCLR;
                         }
 
-                        return color(0);
+                        return UNDEFINEDCLR;
                     });
 
 
             feature.attr("d", path);
-
+            feature.on('mouseover', function (d) {
+                var val = 0;
+                if (d.properties && d.properties.years && d.properties.years[0].annualTax) {
+                        val = d.properties.years[0].annualTax;
+                }
+                $('.tooltip #val').html('$' + num_format(val));
+            });
         });
     }
 
-    function reset() {
+    function reset(data) {
         bounds = path.bounds(data.features);
 
+                console.log(bounds);
 
-        var topLeft = bounds[0],
-                bottomRight = bounds[1];
 
-        console.log("Bounds " + bottomRight);
-
-        svg .attr("width", bottomRight[0] - topLeft[0])
-                .attr("height", bottomRight[1] - topLeft[1])
-                .style("left", topLeft[0] + "px")
-                .style("top", topLeft[1] + "px");
-
-        g   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-        feature.attr("d", path);
+//        feature.attr("d", path);
     }
 
 
@@ -137,5 +155,9 @@
     }
 
 </script>
+
+<div class="tooltip">
+    <span id="val"></span>
+</div>
 </body>
 </html>
