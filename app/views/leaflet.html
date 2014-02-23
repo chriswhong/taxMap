@@ -31,12 +31,12 @@
   <div id="sidebar">
     <div id="taxTab" class="tabs">
       <h2 class="tabTitle">Tax Stuff</h2>
-      <p id="address">Address: <span class="taxData"></span></p>
-      <p id="ownerName">Owner Name: <span class="taxData"></span></p>
-      <p id="taxClass">Tax Class: <span class="taxData"></span></p>
-      <p id="annualTax">Annual Tax: <span class="taxData"></span></p>
-      <p id="taxRate">Tax Rate: <span class="taxData"></span></p>
-      <p id="estimatedValue">Estimated Value: <span class="taxData"></span></p>
+      <p id="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="estimatedValue"><span class="taxTitle">Estimated Value:</span>&nbsp;<span class="taxData"></span></p>
     </div>
   </div>
 
@@ -89,6 +89,8 @@
         svg.attr('top','0px');
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
+          console.log(data);
+
             color.domain((function (data) {
                 return Array.prototype.map.call(data, function(d) {
                      if(d.properties && d.properties.years) {
@@ -124,14 +126,33 @@
                         val = d.properties.years[0].annualTax;
                 }
                 $('.tooltip #val').html('$' + num_format(val));
+                updateSidebar(d.properties);
             });
         });
+    }
+
+    // input is data.properties, updates the values in the sidebar
+    function updateSidebar(p) { 
+      $('#address .taxData').html(p.propertyAddress);
+      $('#ownerName .taxData').html(p.ownerName);
+      $('#taxClass .taxData').html(p.taxClass);
+      $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
+      $('#taxRate .taxData').html(p.years[0].taxRate);
+      $('#estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
     }
 
     function projectPoint(x, y) {
       var point = map.latLngToLayerPoint(new L.LatLng(y, x));
       this.stream.point(point.x, point.y);
     }
+
+    function toDollars(n){
+      var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
+      return "$" + dollars;
+    }
+
+
+    
 </script>
 
 <div class="tooltip">
