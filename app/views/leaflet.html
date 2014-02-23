@@ -31,20 +31,27 @@
 <div id="sidebar"></div>
 
 <div id="taxTabTemplate" class="tab">
-  <h2 class="tabTitle">NYC Property Tax Explorer</h2>
-  <p class="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="borough"><span class="taxTitle">Borough:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="block"><span class="taxTitle">Block:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="lot"><span class="taxTitle">Lot:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></p>
-  <p class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></p>
+  <div class="address"><span class="taxData"></span></div>
+  <div class="bbl">
+    <span class="taxTitle">Borough:</span><span class="borough taxData"></span>
+    <span class="taxTitle">Block:</span><span class="block taxData"></span>
+    <span class="taxTitle">Lot:</span><span class="lot taxData"></span>
+  </div>
+  <div class="ownerName">
+    <span class="taxTitle">Owner:</span><span class="taxData"></span>
+  </div>
+  <div class="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></div>
+
+  <div class="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></div>
+  
+  <div class="taxBefore"><span class="taxTitle">Tax Before Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="exemptions"><span class="taxTitle">Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
+
+  <div id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
 </div>
 
 <script src="js/leaflet.js"></script>
@@ -69,10 +76,8 @@
     var svg = d3.select(map.getPanes().overlayPane).append("svg")
     .attr('width', window.screen.width).attr('height', window.screen.height),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
-    
 
     var popup = L.popup();
-
 
     map.on('dragend', function (e) {
         updatePolygons();
@@ -82,21 +87,17 @@
         updatePolygons();
     });
 
-
     //map.on('viewreset', reset);
 
-    var color = d3.scale.quantize();
-    color.domain([0,7294132]).range(colorbrewer.Blues[9]);
+    var color = d3.scale.quantile();
+    color.domain([0,1000000]).range(colorbrewer.Greens[9]);
 
     updatePolygons();
-
 
     jQuery("#map").mousemove(function(e) {
         jQuery('#flyout')
         .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
-
     });
-
 
     function updatePolygons(){
 
@@ -111,18 +112,15 @@
         map.setView([lat,lon]);
         map.viewreset;
 
-        $('svg').remove();
 
-        var svg = d3.select(map.getPanes().overlayPane).append("svg")
-        .attr('width', window.screen.width).attr('height', window.screen.height),
-        g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-        
-        
-
-        //svg.attr('top','0px');
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
+            $('svg').remove();
+
+            var svg = d3.select(map.getPanes().overlayPane).append("svg")
+                        .attr('width', window.screen.width).attr('height', window.screen.height),
+                  g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
             var transform = d3.geo.transform({point: projectPoint}),
             path = d3.geo.path().projection(transform);
@@ -138,10 +136,8 @@
 
             g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-
-
             var feature = g.selectAll("path")
-            .data(data.features)
+                    .data(data.features)
             .enter()
             .append("path")
             .attr('fill', function (d) {
@@ -153,47 +149,28 @@
 
                     return (d.properties.years[0].annualTax) ? color(d.properties.years[0].annualTax) : UNDEFINEDCLR;
                 }
+                return UNDEFINEDCLR;})
+            .attr("d", path);
 
-                return UNDEFINEDCLR;
-            });
-
-
-            feature.attr("d", path);
             feature.on('mouseover', function (d) {
-                
-           
-                
-
                 updateFlyout(d.properties);
-              
-
             });
 
             feature.on('click', function (d) {
-                
-                // updateSidebar(d.properties);
+
                 updateTabs(d.properties);
 
                 //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
                 //window.open(billUrl);
-
             });
 
             feature.on('mouseout', function (d) {
                 flyoutTimer = setTimeout(function(){
                     $("#flyout").fadeOut(50); 
                 },50);
-                //clearSidebar();
-                //$('#flyout').hide();
-
-
             });
         });
   }
-
-
-
-
 
   function projectPoint(x, y) {
       var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -213,7 +190,6 @@
 
     addTab(p);
   }
-
 
   // input is data.properties, creates a new tab
   function addTab(p) { 

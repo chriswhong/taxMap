@@ -42,17 +42,15 @@ h2 {
     top: 0;
     bottom: 20%;
     right: 0;
-    font-size: 14px;
-    background: #1815BC;
-    color: #fff;
-    padding: 12px;
 }
 
 .tab {
-    height: 226px;
     width: 226px;
-    background-color: #e8e8e8;
-    padding: 15px;
+    font-size: 11px;
+    height: 226px;
+    background: #1815BC;
+    color: #fff;
+    padding: 12px;
 }
 
 #flyout {
@@ -108,10 +106,6 @@ h2 {
   text-align: center;
 }
 
-#taxTab p {
-  font-size: 14px;
-}
-
 #taxTab .taxTitle {
   text-decoration: underline;
   font-weight:700;
@@ -120,10 +114,42 @@ h2 {
 #taxTab .taxData {
   text-decoration: none;
 }
-#address {
+
+.address {
     font-size: 18px;
 }
 
 #taxTabTemplate {
-  display:none;
+    display:none;
+    font-size: 22px;
+    margin-bottom: 3px;
+}
+#bbl {
+    font-size: 10px;;
+}
+
+.borough, .block, .lot {
+    text-decoration:underline;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.estimatedValue .taxData, 
+.assessedValue .taxData,
+.taxRate .taxData,
+.taxBefore .taxData,
+.annualTax .taxData,
+.exemptions .taxData,
+.taxBefore .taxData,
+.taxPerUnit .taxData{
+    float:right;
+}
+
+.annualTax {
+    border-bottom: 1px solid;
+    font-size:16px;
+}
+
+#sidebar div {
+    margin-bottom: 2px;
 }
