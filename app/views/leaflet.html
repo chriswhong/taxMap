@@ -8,23 +8,33 @@
 
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,500,700' rel='stylesheet' type='text/css'>
 
+  <link rel="stylesheet" href="css/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
 
-    <link rel="stylesheet" href="css/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <style>
-        path{
-            stroke:#000;
-        }
+    body {
+        font-family: 'Maven Pro', sans-serif;
+    }
 
-        .tooltip {
-            position: fixed;
-            top: 10px;
-            left: 50px;
-            background: #fff;
-            padding: 10px;
-        }
-    </style>
+    path {
+        stroke:#000;
+        
+    }
+
+    path:hover {
+        cursor:pointer;
+    }
+
+    .tooltip {
+        position: fixed;
+        top: 10px;
+        left: 50px;
+        background: #fff;
+        padding: 10px;
+    }
+</style>
 
 </head>
 <body>
@@ -33,15 +43,23 @@
 
   <div id="sidebar">
     <div id="taxTab" class="tabs">
-      <h2 class="tabTitle">Tax Stuff</h2>
+      <h2 class="tabTitle">NYC Property Tax Explorer</h2>
       <p id="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="borough"><span class="taxTitle">Borough:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="block"><span class="taxTitle">Block:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="lot"><span class="taxTitle">Lot:</span>&nbsp;<span class="taxData"></span></p>
       <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
       <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+
+      <p id="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></p>
       <p id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="estimatedValue"><span class="taxTitle">Estimated Value:</span>&nbsp;<span class="taxData"></span></p>
-    </div>
+      
+      <p id="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>
+
+      <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
   </div>
+</div>
 
 <script src="js/leaflet.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -62,21 +80,17 @@
 
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg")
-            .attr('width', window.screen.width).attr('height', window.screen.height),
-            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+    .attr('width', window.screen.width).attr('height', window.screen.height),
+    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
 
     
 
     var popup = L.popup();
 
-    function onMapClick(e) {
-        popup.setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
-    }
 
-    map.on('click', onMapClick);
+
+
 
     map.on('dragend', function (e) {
         updatePolygons();
@@ -89,10 +103,13 @@
 
     //map.on('viewreset', reset);
 
+    var color = d3.scale.quantize();
+    color.domain([0,7294132]).range(colorbrewer.Blues[9]);
+
     updatePolygons();
 
 
-    var color = d3.scale.ordinal();
+    
 
 
     function updatePolygons(){
@@ -104,18 +121,17 @@
         var lat = center.lat;
         var lon = center.lng;
 
-    console.log(map.getCenter());
+        
         map.setView([lat,lon]);
         map.viewreset;
-     
-    $('svg').remove();
 
-     var svg = d3.select(map.getPanes().overlayPane).append("svg")
-    .attr('width', window.screen.width).attr('height', window.screen.height),
-    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+        $('svg').remove();
 
-    
-        console.log("updatePoygons ran")        
+        var svg = d3.select(map.getPanes().overlayPane).append("svg")
+        .attr('width', window.screen.width).attr('height', window.screen.height),
+        g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+        
         
 
         //svg.attr('top','0px');
@@ -129,23 +145,14 @@
             var topLeft = bounds[0],
             bottomRight = bounds[1];
 
-                svg.attr("width", bottomRight[0] - topLeft[0])
-                .attr("height", bottomRight[1] - topLeft[1])
-                .style("left", topLeft[0] + "px")
-                .style("top", topLeft[1] + "px");
+            svg.attr("width", bottomRight[0] - topLeft[0])
+            .attr("height", bottomRight[1] - topLeft[1])
+            .style("left", topLeft[0] + "px")
+            .style("top", topLeft[1] + "px");
 
-                g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+            g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
 
-            color.domain((function (data) {
-                return Array.prototype.map.call(data, function(d) {
-                   if(d.properties && d.properties.years) {
-                    return d.properties.years[0].annualTax;
-                }
-
-                return 0;
-            });
-            })(data.features)).range(colorbrewer.Blues[9]);
 
             var feature = g.selectAll("path")
             .data(data.features)
@@ -167,25 +174,31 @@
 
             feature.attr("d", path);
             feature.on('mouseover', function (d) {
-                var val = 0;
-                if (d.properties && d.properties.years && d.properties.years[0].annualTax) {
-                    val = d.properties.years[0].annualTax;
-                }
-                $('.tooltip #val').html('$' + num_format(val));
+                
+                console.log(d.properties.years[0].annualTax);
+                console.log(color(d.properties.years[0].annualTax));
                 updateSidebar(d.properties);
+              
+
+            });
+
+            feature.on('click', function (d) {
+                console.log(d);
+                var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+                window.open(billUrl);
+            });
+
+            feature.on('mouseout', function (d) {
+
+                clearSidebar();
+
+
             });
         });
 }
 
 
-function reset(data) {
-    bounds = path.bounds(data.features);
 
-    console.log(bounds);
-
-
-//        feature.attr("d", path);
-}
 
 
 function projectPoint(x, y) {
@@ -195,27 +208,44 @@ function projectPoint(x, y) {
 
     // input is data.properties, updates the values in the sidebar
     function updateSidebar(p) { 
-      $('#address .taxData').html(p.propertyAddress);
-      $('#ownerName .taxData').html(p.ownerName);
-      $('#taxClass .taxData').html(p.taxClass);
-      $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
-      $('#taxRate .taxData').html(p.years[0].taxRate);
-      $('#estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+        var borough = String(p.billingbbl).charAt(0);
+        var block = String(p.billingbbl).substring(1,6);
+        var lot = String(p.billingbbl).substring(6,10);
+
+
+        $('#borough .taxData').html(borough);
+        $('#block .taxData').html(block);
+        $('#lot .taxData').html(lot);
+
+        $('#address .taxData').html(p.propertyAddress);
+        $('#ownerName .taxData').html(p.ownerName);
+        $('#taxClass .taxData').html(p.taxClass);
+
+        $('#estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+        $('#assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
+        $('#taxRate .taxData').html(p.years[0].taxRate);
+        $('#taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
+        $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
+
+    }
+
+    function clearSidebar() {
+        $('.taxData').html("");
     }
 
     function projectPoint(x, y) {
       var point = map.latLngToLayerPoint(new L.LatLng(y, x));
       this.stream.point(point.x, point.y);
-    }
+  }
 
-    function toDollars(n){
+  function toDollars(n){
       var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
       return "$" + dollars;
-    }
+  }
 
 
 
-    
+
 </script>
 
 <div class="tooltip">

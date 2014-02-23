@@ -7,21 +7,24 @@ html, body, #map {
     width: 100%;
 }
 
+h2 {
+    margin: 0;
+}
+
 #sidebar {
     position: absolute;
-    top: 20%;
+    top: 0;
     bottom: 20%;
     right: 0;
-    width: 20%;
+    width: 300px;
     font-size: 14px;
+    height: 100%;
 }
 
 .tabs {
     background-color: #e8e8e8;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
-    padding-left: 20px;
+
+    padding: 15px;
 }
 
 #taxTab {
@@ -38,6 +41,7 @@ html, body, #map {
 
 #taxTab .taxTitle {
   text-decoration: underline;
+  font-weight:700;
 }
 
 #taxTab .taxData {
