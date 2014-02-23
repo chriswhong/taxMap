@@ -166,3 +166,9 @@ h2 {
 #sidebar div {
     margin-bottom: 2px;
 }
+
+.tab .close {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+}
