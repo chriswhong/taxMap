@@ -48,9 +48,12 @@ h2 {
     width: 226px;
     font-size: 11px;
     height: 226px;
-    background: #1815BC;
+    background: #16639A;
     color: #fff;
     padding: 12px;
+    margin: 5px 10px;
+    border-right: 3px solid #04364F;
+    border-bottom: 3px solid #04364F;
 }
 
 #flyout {
