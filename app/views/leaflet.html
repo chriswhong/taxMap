@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
 
-
 </head>
 <body>
 <div id = "flyout">
@@ -52,6 +51,9 @@
   <div class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
 
   <div class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
+
+  <div class="taxBillLink"><a>11/22/2013 Tax Bill</a></div>
+
 </div>
 
 <script src="js/leaflet.js"></script>
@@ -80,11 +82,11 @@
     var popup = L.popup();
 
     map.on('dragend', function (e) {
-        updatePolygons();
+        updatePolygons(false);
     });
 
     map.on('zoomend', function (e) {
-        updatePolygons();
+        updatePolygons(true);
     });
 
     //map.on('viewreset', reset);
@@ -92,14 +94,14 @@
     var color = d3.scale.quantile();
     color.domain([0,1000000]).range(colorbrewer.Greens[9]);
 
-    updatePolygons();
+    updatePolygons(false);
 
     jQuery("#map").mousemove(function(e) {
         jQuery('#flyout')
         .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
     });
 
-    function updatePolygons(){
+    function updatePolygons(isZoom){
 
         $(".map-pane-overlay")
 
@@ -108,13 +110,14 @@
         var lat = center.lat;
         var lon = center.lng;
 
-        
-        map.setView([lat,lon]);
-        map.viewreset;
-
+        if (isZoom) {
+            $('svg').css('display', 'none');
+        }
 
 
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
+            map.setView([lat,lon]);
+            map.viewreset;
 
             $('svg').remove();
 
@@ -159,10 +162,6 @@
             feature.on('click', function (d) {
 
                 updateTabs(d.properties);
-                feature.addClass()
-
-                //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-                //window.open(billUrl);
             });
 
             feature.on('mouseout', function (d) {
@@ -215,6 +214,12 @@
       tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
       tab.find('.unitsTotal .taxData').html(p.unitsTotal);
       tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
+
+      tab.find('.taxBillLink a').click(function (e) {
+        e.preventDefault();
+        var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+        window.open(billUrl);
+      });
 
       $(tab[0]).removeAttr('id').addClass('active');
       $('#sidebar').append(tab);
