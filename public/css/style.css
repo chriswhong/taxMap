@@ -11,6 +11,32 @@ h2 {
     margin: 0;
 }
 
+ body {
+        font-family: 'Maven Pro', sans-serif;
+    }
+
+    path {
+        stroke:#000;
+        opacity:.6;
+        
+    }
+
+    path:hover {
+        cursor:pointer;
+        opacity:1;
+        stroke: #56FF59;
+        stroke-width: 3px;
+
+    }
+
+    .tooltip {
+        position: fixed;
+        top: 10px;
+        left: 50px;
+        background: #fff;
+        padding: 10px;
+    }
+
 #sidebar {
     position: absolute;
     top: 0;
