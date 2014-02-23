@@ -79,14 +79,7 @@
     .attr('width', window.screen.width).attr('height', window.screen.height),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-
-    
-
     var popup = L.popup();
-
-
-
-
 
     map.on('dragend', function (e) {
         updatePolygons();
@@ -96,21 +89,17 @@
         updatePolygons();
     });
 
-
     //map.on('viewreset', reset);
 
-    var color = d3.scale.quantize();
-    color.domain([0,7294132]).range(colorbrewer.Blues[9]);
+    var color = d3.scale.quantile();
+    color.domain([0,1000000]).range(colorbrewer.Greens[9]);
 
     updatePolygons();
-
 
     jQuery("#map").mousemove(function(e) {
         jQuery('#flyout')
         .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
-
     });
-
 
     function updatePolygons(){
 
@@ -125,18 +114,15 @@
         map.setView([lat,lon]);
         map.viewreset;
 
-        $('svg').remove();
 
-        var svg = d3.select(map.getPanes().overlayPane).append("svg")
-        .attr('width', window.screen.width).attr('height', window.screen.height),
-        g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-        
-        
-
-        //svg.attr('top','0px');
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
+            $('svg').remove();
+
+            var svg = d3.select(map.getPanes().overlayPane).append("svg")
+                        .attr('width', window.screen.width).attr('height', window.screen.height),
+                  g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
             var transform = d3.geo.transform({point: projectPoint}),
             path = d3.geo.path().projection(transform);
@@ -152,10 +138,8 @@
 
             g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-
-
             var feature = g.selectAll("path")
-            .data(data.features)
+                    .data(data.features)
             .enter()
             .append("path")
             .attr('fill', function (d) {
@@ -167,46 +151,27 @@
 
                     return (d.properties.years[0].annualTax) ? color(d.properties.years[0].annualTax) : UNDEFINEDCLR;
                 }
+                return UNDEFINEDCLR;})
+            .attr("d", path);
 
-                return UNDEFINEDCLR;
-            });
-
-
-            feature.attr("d", path);
             feature.on('mouseover', function (d) {
-                
-           
-                
-
                 updateFlyout(d.properties);
-              
-
             });
 
             feature.on('click', function (d) {
-                
                 updateSidebar(d.properties);
-
-                //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-                //window.open(billUrl);
-
             });
 
             feature.on('mouseout', function (d) {
                 flyoutTimer = setTimeout(function(){
                     $("#flyout").fadeOut(50); 
                 },50);
-                //clearSidebar();
-                //$('#flyout').hide();
-
-
             });
+
+
+
         });
 }
-
-
-
-
 
 function projectPoint(x, y) {
     var point = map.latLngToLayerPoint(new L.LatLng(y, x));
