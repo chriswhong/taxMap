@@ -82,11 +82,11 @@
     var popup = L.popup();
 
     map.on('dragend', function (e) {
-        updatePolygons();
+        updatePolygons(false);
     });
 
     map.on('zoomend', function (e) {
-        updatePolygons();
+        updatePolygons(true);
     });
 
     //map.on('viewreset', reset);
@@ -94,14 +94,14 @@
     var color = d3.scale.quantile();
     color.domain([0,1000000]).range(colorbrewer.Greens[9]);
 
-    updatePolygons();
+    updatePolygons(false);
 
     jQuery("#map").mousemove(function(e) {
         jQuery('#flyout')
         .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
     });
 
-    function updatePolygons(){
+    function updatePolygons(isZoom){
 
         $(".map-pane-overlay")
 
@@ -110,13 +110,14 @@
         var lat = center.lat;
         var lon = center.lng;
 
-        
-        map.setView([lat,lon]);
-        map.viewreset;
-
+        if (isZoom) {
+            $('svg').css('display', 'none');
+        }
 
 
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
+            map.setView([lat,lon]);
+            map.viewreset;
 
             $('svg').remove();
 
