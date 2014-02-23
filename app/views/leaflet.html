@@ -51,7 +51,7 @@
   <div class="exemptions"><span class="taxTitle">Exemptions:</span>&nbsp;<span class="taxData"></span></div>
   <div class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
 
-  <div id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
 </div>
 
 <script src="js/leaflet.js"></script>
@@ -159,6 +159,7 @@
             feature.on('click', function (d) {
 
                 updateTabs(d.properties);
+                feature.addClass()
 
                 //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
                 //window.open(billUrl);
