@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
 
-
 </head>
 <body>
 <div id = "flyout">
@@ -51,9 +50,9 @@
   <div class="exemptions"><span class="taxTitle">Exemptions:</span>&nbsp;<span class="taxData"></span></div>
   <div class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
 
-  <div id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
+  <div class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
 
-   <div class = "taxBillLink"><a>11/22/2013 Tax Bill</a></div>
+  <div class="taxBillLink"><a>11/22/2013 Tax Bill</a></div>
 
 </div>
 
@@ -163,9 +162,6 @@
             feature.on('click', function (d) {
 
                 updateTabs(d.properties);
-
-                //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-                //window.open(billUrl);
             });
 
             feature.on('mouseout', function (d) {
@@ -218,6 +214,12 @@
       tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
       tab.find('.unitsTotal .taxData').html(p.unitsTotal);
       tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
+
+      tab.find('.taxBillLink a').click(function (e) {
+        e.preventDefault();
+        var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+        window.open(billUrl);
+      });
 
       $(tab[0]).removeAttr('id').addClass('active');
       $('#sidebar').append(tab);

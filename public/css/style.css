@@ -153,6 +153,16 @@ h2 {
     font-size:16px;
 }
 
+.taxBillLink a {
+  color: white;
+  text-decoration: underline;
+  text-align: center;
+}
+
+.taxBillLink a:hover {
+  cursor: pointer;
+}
+
 #sidebar div {
     margin-bottom: 2px;
 }
