@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Leaflet Quick Start Guide Example</title>
-    <meta charset="utf-8" />
+  <title>Leaflet Quick Start Guide Example</title>
+  <meta charset="utf-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/css/leaflet.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -28,11 +29,26 @@
 </head>
 <body>
   <div id="map"></div>
-  <script src="/js/leaflet.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
-  <script>
+
+
+  <div id="sidebar">
+    <div id="taxTab" class="tabs">
+      <h2 class="tabTitle">Tax Stuff</h2>
+      <p id="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
+      <p id="estimatedValue"><span class="taxTitle">Estimated Value:</span>&nbsp;<span class="taxData"></span></p>
+    </div>
+  </div>
+
+<script src="js/leaflet.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+<script>
+
 
     var UNDEFINEDCLR = '#000';
     var ZEROCLR = '#F00';
@@ -44,7 +60,11 @@
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
     }).addTo(map);
 
-    
+
+    var svg = d3.select(map.getPanes().overlayPane).append("svg")
+            .attr('width', window.screen.width).attr('height', window.screen.height),
+            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
 
     
 
@@ -66,9 +86,11 @@
         updatePolygons();
     });
 
+
     //map.on('viewreset', reset);
 
     updatePolygons();
+
 
     var color = d3.scale.ordinal();
 
@@ -99,6 +121,7 @@
         //svg.attr('top','0px');
         d3.json("http://localhost:3000/taxlots?bbox=" + bboxString,function(data){
 
+
             var transform = d3.geo.transform({point: projectPoint}),
             path = d3.geo.path().projection(transform);
             bounds = path.bounds(data);
@@ -112,6 +135,7 @@
                 .style("top", topLeft[1] + "px");
 
                 g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
 
             color.domain((function (data) {
                 return Array.prototype.map.call(data, function(d) {
@@ -148,9 +172,11 @@
                     val = d.properties.years[0].annualTax;
                 }
                 $('.tooltip #val').html('$' + num_format(val));
+                updateSidebar(d.properties);
             });
         });
 }
+
 
 function reset(data) {
     bounds = path.bounds(data.features);
@@ -167,6 +193,29 @@ function projectPoint(x, y) {
     this.stream.point(point.x, point.y);
 }
 
+    // input is data.properties, updates the values in the sidebar
+    function updateSidebar(p) { 
+      $('#address .taxData').html(p.propertyAddress);
+      $('#ownerName .taxData').html(p.ownerName);
+      $('#taxClass .taxData').html(p.taxClass);
+      $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
+      $('#taxRate .taxData').html(p.years[0].taxRate);
+      $('#estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+    }
+
+    function projectPoint(x, y) {
+      var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+      this.stream.point(point.x, point.y);
+    }
+
+    function toDollars(n){
+      var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
+      return "$" + dollars;
+    }
+
+
+
+    
 </script>
 
 <div class="tooltip">
