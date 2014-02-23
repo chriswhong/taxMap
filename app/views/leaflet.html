@@ -36,20 +36,23 @@
         <span class="taxTitle">Block:</span><span class="block taxData"></span>
         <span class="taxTitle">Lot:</span><span class="lot taxData"></span>
       </div>
-      <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
+      <div id="ownerName">
+        <span class="taxTitle">Owner:</span><span class="taxData"></span>
+      </div>
+      <div id="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></div>
+      <div id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></div>
 
-      <p id="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
+      <div id="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></div>
+      <div id="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></div>
+      <div id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></div>
       
-      <p id="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>
+      <div id="taxBefore"><span class="taxTitle">Tax Before Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+      <div id="exemptions"><span class="taxTitle">Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+      <div id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
 
-      <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+      
 
-      <p id="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></p>
-
-      <p id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></p>
+      <div id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
   </div>
 </div>
 
@@ -218,9 +221,9 @@ function projectPoint(x, y) {
         var lot = String(p.billingbbl).substring(6,10);
 
 
-        $('#borough .taxData').html(borough);
-        $('#block .taxData').html(block);
-        $('#lot .taxData').html(lot);
+        $('.borough.taxData').html(borough);
+        $('.block.taxData').html(block);
+        $('.lot.taxData').html(lot);
 
         $('#address .taxData').html(p.propertyAddress);
         $('#ownerName .taxData').html(p.ownerName);
@@ -230,6 +233,7 @@ function projectPoint(x, y) {
         $('#assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
         $('#taxRate .taxData').html(p.years[0].taxRate);
         $('#taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
+        $('#exemptions .taxData').html(toDollars(p.years[0].taxBefore-p.years[0].annualTax));
         $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
         $('#unitsTotal .taxData').html(p.unitsTotal);
         $('#taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));

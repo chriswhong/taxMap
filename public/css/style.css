@@ -43,7 +43,7 @@ h2 {
     bottom: 20%;
     right: 0;
     width: 226px;
-    font-size: 14px;
+    font-size: 11px;
     height: 226px;
     background: #1815BC;
     color: #fff;
@@ -122,5 +122,35 @@ h2 {
   text-decoration: none;
 }
 #address {
-    font-size: 18px;
+    font-size: 22px;
+    margin-bottom: 3px;
+}
+#bbl {
+    font-size: 10px;;
+}
+
+.borough, .block, .lot {
+    text-decoration:underline;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+#estimatedValue .taxData, 
+#assessedValue .taxData,
+#taxRate .taxData,
+#taxBefore .taxData,
+#annualTax .taxData,
+#exemptions .taxData,
+#taxBefore .taxData,
+#taxPerUnit .taxData{
+    float:right;
+}
+
+#annualTax {
+    border-bottom: 1px solid;
+    font-size:16px;
+}
+
+#sidebar div {
+    margin-bottom: 2px;
 }
