@@ -20,11 +20,14 @@
 
     path {
         stroke:#000;
+        opacity:.6;
         
     }
 
     path:hover {
         cursor:pointer;
+        opacity:1;
+
     }
 
     .tooltip {
@@ -38,8 +41,18 @@
 
 </head>
 <body>
+<div id = "flyout">
+    <div id = "flyoutTop">
+        <div id = "flyoutAddress"></div>
+        Annual Tax:<div id = "flyoutTax"></div>
+        <div class = "flyoutClick">Click property for details...</div>
+    </div>
+    <div id = "flyoutBottom">
+    
+    </div>
+</div>
   <div id="map"></div>
-
+  
 
   <div id="sidebar">
     <div id="taxTab" class="tabs">
@@ -58,13 +71,17 @@
       <p id="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>
 
       <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+
+      <p id="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></p>
+
+      <p id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></p>
   </div>
 </div>
 
 <script src="js/leaflet.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script src="js/colorbrewer.js"></script>
 <script>
 
 
@@ -109,7 +126,11 @@
     updatePolygons();
 
 
-    
+    jQuery("#map").mousemove(function(e) {
+        jQuery('#flyout')
+        .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
+
+    });
 
 
     function updatePolygons(){
@@ -175,22 +196,26 @@
             feature.attr("d", path);
             feature.on('mouseover', function (d) {
                 
-                console.log(d.properties.years[0].annualTax);
-                console.log(color(d.properties.years[0].annualTax));
+           
                 updateSidebar(d.properties);
+
+                updateFlyout(d.properties);
               
 
             });
 
             feature.on('click', function (d) {
-                console.log(d);
+                
                 var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
                 window.open(billUrl);
             });
 
             feature.on('mouseout', function (d) {
-
+                flyoutTimer = setTimeout(function(){
+                    $("#flyout").fadeOut(50); 
+                },50);
                 clearSidebar();
+                //$('#flyout').hide();
 
 
             });
@@ -205,6 +230,7 @@ function projectPoint(x, y) {
     var point = map.latLngToLayerPoint(new L.LatLng(y, x));
     this.stream.point(point.x, point.y);
 }
+
 
     // input is data.properties, updates the values in the sidebar
     function updateSidebar(p) { 
@@ -226,6 +252,18 @@ function projectPoint(x, y) {
         $('#taxRate .taxData').html(p.years[0].taxRate);
         $('#taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
         $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
+        $('#unitsTotal .taxData').html(p.unitsTotal);
+        $('#taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
+
+    }
+
+    function updateFlyout(d){
+        console.log(d);
+        $('#flyoutAddress').html(d.propertyAddress);
+        $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+
+        clearTimeout(flyoutTimer);
+        $('#flyout').fadeIn(50);
 
     }
 
