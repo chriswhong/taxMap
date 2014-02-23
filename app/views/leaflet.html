@@ -12,32 +12,7 @@
 
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <style>
 
-    body {
-        font-family: 'Maven Pro', sans-serif;
-    }
-
-    path {
-        stroke:#000;
-        opacity:.6;
-        
-    }
-
-    path:hover {
-        cursor:pointer;
-        opacity:1;
-
-    }
-
-    .tooltip {
-        position: fixed;
-        top: 10px;
-        left: 50px;
-        background: #fff;
-        padding: 10px;
-    }
-</style>
 
 </head>
 <body>
@@ -52,8 +27,25 @@
     </div>
 </div>
 <div id="map"></div>
-  
+
 <div id="sidebar"></div>
+
+<div id="taxTabTemplate" class="tab">
+  <h2 class="tabTitle">NYC Property Tax Explorer</h2>
+  <p class="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="borough"><span class="taxTitle">Borough:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="block"><span class="taxTitle">Block:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="lot"><span class="taxTitle">Lot:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></p>
+  <p class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></p>
+</div>
 
 <script src="js/leaflet.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -77,14 +69,9 @@
     var svg = d3.select(map.getPanes().overlayPane).append("svg")
     .attr('width', window.screen.width).attr('height', window.screen.height),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
-
-
     
 
     var popup = L.popup();
-
-
-
 
 
     map.on('dragend', function (e) {
@@ -175,7 +162,7 @@
             feature.on('mouseover', function (d) {
                 
            
-                updateSidebar(d.properties);
+                
 
                 updateFlyout(d.properties);
               
@@ -184,15 +171,19 @@
 
             feature.on('click', function (d) {
                 
-                var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-                window.open(billUrl);
+                // updateSidebar(d.properties);
+                updateTabs(d.properties);
+
+                //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+                //window.open(billUrl);
+
             });
 
             feature.on('mouseout', function (d) {
                 flyoutTimer = setTimeout(function(){
                     $("#flyout").fadeOut(50); 
                 },50);
-                clearSidebar();
+                //clearSidebar();
                 //$('#flyout').hide();
 
 
@@ -210,59 +201,65 @@
   }
 
 
-  // input is data.properties, updates the values in the sidebar
-  function updateSidebar(p) { 
+  function updateTabs(p) {
+
+    var tabs = $('#sidebar').children('.tab');
+
+    // if three tabs, kill top one.
+    if (tabs.length > 2) {
+      var first = $(tabs[0]);
+      $('#sidebar').children(":first").remove();
+    }
+
+    addTab(p);
+  }
+
+
+  // input is data.properties, creates a new tab
+  function addTab(p) { 
       var borough = String(p.billingbbl).charAt(0);
       var block = String(p.billingbbl).substring(1,6);
       var lot = String(p.billingbbl).substring(6,10);
 
+      var tab = $('#taxTabTemplate').clone();
 
-      $('#borough .taxData').html(borough);
-      $('#block .taxData').html(block);
-      $('#lot .taxData').html(lot);
+      tab.find('.borough .taxData').html(borough);
+      tab.find('.block .taxData').html(block);
+      tab.find('.lot .taxData').html(lot);
 
-      $('#address .taxData').html(p.propertyAddress);
-      $('#ownerName .taxData').html(p.ownerName);
-      $('#taxClass .taxData').html(p.taxClass);
+      tab.find('.address .taxData').html(p.propertyAddress);
+      tab.find('.ownerName .taxData').html(p.ownerName);
+      tab.find('.taxClass .taxData').html(p.taxClass);
 
-      $('#estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
-      $('#assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
-      $('#taxRate .taxData').html(p.years[0].taxRate);
-      $('#taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
-      $('#annualTax .taxData').html(toDollars(p.years[0].annualTax));
-      $('#unitsTotal .taxData').html(p.unitsTotal);
-      $('#taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
+      tab.find('.stimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+      tab.find('.assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
+      tab.find('.taxRate .taxData').html(p.years[0].taxRate);
+      tab.find('.taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
+      tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
+      tab.find('.unitsTotal .taxData').html(p.unitsTotal);
+      tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
 
+      $(tab[0]).removeAttr('id').addClass('active');
+      $('#sidebar').append(tab);
+      tab.show();
+      // console.log(tab);
+      // console.log(tab[0]);
   }
 
-    var tabString = '<div id="taxTab" class="tabs">\
-        <h2 class="tabTitle">NYC Property Tax Explorer</h2>
-        <p id="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="borough"><span class="taxTitle">Borough:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="block"><span class="taxTitle">Block:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="lot"><span class="taxTitle">Lot:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="taxBefore"><span class="taxTitle">Tax Before Exemptions and Abatements:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></p>\
-        <p id="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></p>\
-      </div>';
-
-    $('#sidebar').html(tabString);
 
 
     // sidebar needs to have up to 3 tabs. When a property is clicked, it should put all the variables in a tab. When the 2nd is clicked, it should put it in the tab below. 3rd is same. When the 4th is clicked, it should remove the first tab and insert a new tab below. Tabs should have an exit circle to click and get out of the tab. If tab 1 is exited, move tabs 2 and 3 up. If tab 2 is clicked, move tab 3 up...
+
+    // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
 
 
 
   function updateFlyout(d){
       console.log(d);
       $('#flyoutAddress').html(d.propertyAddress);
-      $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+      if (d.years) {
+        $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+      }
 
       clearTimeout(flyoutTimer);
       $('#flyout').fadeIn(50);
@@ -279,8 +276,10 @@
   }
 
   function toDollars(n){
-      var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
-      return "$" + dollars;
+    if (!n) return 'undefined';
+    if (typeof n == 'String') n = parseInt(n);
+    var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
+    return "$" + dollars;
   }
 
 </script>

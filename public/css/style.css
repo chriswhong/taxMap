@@ -42,14 +42,16 @@ h2 {
     top: 0;
     bottom: 20%;
     right: 0;
-    width: 300px;
     font-size: 14px;
-    height: 100%;
+    background: #1815BC;
+    color: #fff;
+    padding: 12px;
 }
 
-.tabs {
+.tab {
+    height: 226px;
+    width: 226px;
     background-color: #e8e8e8;
-
     padding: 15px;
 }
 
@@ -117,4 +119,11 @@ h2 {
 
 #taxTab .taxData {
   text-decoration: none;
+}
+#address {
+    font-size: 18px;
+}
+
+#taxTabTemplate {
+  display:none;
 }
