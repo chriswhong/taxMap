@@ -12,32 +12,7 @@
 
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <style>
 
-    body {
-        font-family: 'Maven Pro', sans-serif;
-    }
-
-    path {
-        stroke:#000;
-        opacity:.6;
-        
-    }
-
-    path:hover {
-        cursor:pointer;
-        opacity:1;
-
-    }
-
-    .tooltip {
-        position: fixed;
-        top: 10px;
-        left: 50px;
-        background: #fff;
-        padding: 10px;
-    }
-</style>
 
 </head>
 <body>
@@ -55,12 +30,12 @@
   
 
   <div id="sidebar">
-    <div id="taxTab" class="tabs">
-      <h2 class="tabTitle">NYC Property Tax Explorer</h2>
-      <p id="address"><span class="taxTitle">Address:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="borough"><span class="taxTitle">Borough:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="block"><span class="taxTitle">Block:</span>&nbsp;<span class="taxData"></span></p>
-      <p id="lot"><span class="taxTitle">Lot:</span>&nbsp;<span class="taxData"></span></p>
+      <div id="address"><span class="taxData"></span></div>
+      <div id="bbl">
+        <span class="taxTitle">Borough:</span><span class="borough taxData"></span>
+        <span class="taxTitle">Block:</span><span class="block taxData"></span>
+        <span class="taxTitle">Lot:</span><span class="lot taxData"></span>
+      </div>
       <p id="ownerName"><span class="taxTitle">Owner Name:</span>&nbsp;<span class="taxData"></span></p>
       <p id="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></p>
 
@@ -198,7 +173,7 @@
             feature.on('mouseover', function (d) {
                 
            
-                updateSidebar(d.properties);
+                
 
                 updateFlyout(d.properties);
               
@@ -207,15 +182,18 @@
 
             feature.on('click', function (d) {
                 
-                var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-                window.open(billUrl);
+                updateSidebar(d.properties);
+
+                //var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + d.properties.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+                //window.open(billUrl);
+
             });
 
             feature.on('mouseout', function (d) {
                 flyoutTimer = setTimeout(function(){
                     $("#flyout").fadeOut(50); 
                 },50);
-                clearSidebar();
+                //clearSidebar();
                 //$('#flyout').hide();
 
 
