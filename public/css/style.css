@@ -2,7 +2,8 @@ body {
     padding: 0;
     margin: 0;
 }
-html, body, #map {
+
+html,body,#map {
     height: 100%;
     width: 100%;
 }
@@ -12,49 +13,47 @@ h2 {
 }
 
 #map {
-    position:fixed;
+    position: fixed;
 }
 
- body {
-        font-family: 'Maven Pro', sans-serif;
-    }
+body {
+    font-family: 'Maven Pro', sans-serif;
+}
 
-    path {
-        stroke:#000;
-        opacity:.6;
-        
-    }
+path {
+    stroke: #000;
+    opacity: .6;
+}
 
-    path:hover {
-        cursor:pointer;
-        opacity:1;
-        stroke: #56FF59;
-        stroke-width: 3px;
+path:hover {
+    cursor: pointer;
+    opacity: 1;
+    stroke: #56FF59;
+    stroke-width: 3px;
+}
 
-    }
-
-    .tooltip {
-        position: fixed;
-        top: 10px;
-        left: 50px;
-        background: #fff;
-        padding: 10px;
-    }
+.tooltip {
+    position: fixed;
+    top: 10px;
+    left: 50px;
+    background: #fff;
+    padding: 10px;
+}
 
 #sidebar {
     position: absolute;
     top: 0;
     right: 0;
     width: 272px;
-
 }
+
 .tabCloseButton {
     font-size: 19px;
-position: relative;
-left: -1px;
-top: -1px;
-float: right;
-    }
+    position: relative;
+    left: -1px;
+    top: -1px;
+    float: right;
+}
 
 .tab {
     width: 226px;
@@ -74,10 +73,8 @@ float: right;
     position: absolute;
     width: 250px;
     color: #fff;
-    display:none;
- 
+    display: none;
     top: 0;
-
     z-index: 2000;
 }
 
@@ -85,7 +82,7 @@ float: right;
     background: #16639A;
     padding: 8px;
     font-size: 14px;
-    height:75px;
+    height: 75px;
 }
 
 #flyoutBottom {
@@ -93,15 +90,15 @@ float: right;
     height: 0;
     width: 0;
     border-left: 35px #04364F solid;
-    border-bottom: 19px solid rgba(255, 255, 255, 0);
+    border-bottom: 19px solid rgba(255,255,255,0);
     position: relative;
     right: -216px;
-
 }
 
 #flyoutAddress {
     font-size: 20px;
-    margin-bottom: 8px;}
+    margin-bottom: 8px;
+}
 
 #flyoutTax {
     display: inline-block;
@@ -111,25 +108,24 @@ float: right;
 }
 
 .flyoutClick {
-
     font-size: 9px;
 }
 
 #taxTab {
-    height: 100%
+    height: 100%;
 }
 
 .tabTitle {
-  text-align: center;
+    text-align: center;
 }
 
 #taxTab .taxTitle {
-  text-decoration: underline;
-  font-weight:700;
+    text-decoration: underline;
+    font-weight: 700;
 }
 
 #taxTab .taxData {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .address {
@@ -137,50 +133,43 @@ float: right;
 }
 
 #taxTabTemplate {
-    display:none;
+    display: none;
     font-size: 22px;
     margin-bottom: 3px;
 }
+
 #bbl {
-    font-size: 10px;;
+    font-size: 10px;
 }
 
-.borough, .block, .lot {
-    text-decoration:underline;
+.borough,.block,.lot {
+    text-decoration: underline;
     margin-left: 3px;
     margin-right: 3px;
 }
 
-.estimatedValue .taxData, 
-.assessedValue .taxData,
-.taxRate .taxData,
-.taxBefore .taxData,
-.annualTax .taxData,
-.exemptions .taxData,
-.taxBefore .taxData,
-.taxPerUnit .taxData{
-    float:right;
+.estimatedValue .taxData,.assessedValue .taxData,.taxRate .taxData,.taxBefore .taxData,.annualTax .taxData,.exemptions .taxData,.taxBefore .taxData,.taxPerUnit .taxData {
+    float: right;
 }
 
 .annualTax {
     border-bottom: 1px solid;
-    font-size:16px;
+    font-size: 16px;
 }
 
 .taxBillLink a {
-  color: white;
-  text-decoration: underline;
-  text-align: center;
+    color: #FFF;
+    text-decoration: underline;
+    text-align: center;
 }
 
-.taxBillLink a:hover, .tabCloseButton:hover {
-  cursor: pointer;
+.taxBillLink a:hover,.tabCloseButton:hover {
+    cursor: pointer;
 }
 
 #sidebar div {
     margin-bottom: 2px;
 }
-
 
 #title {
     width: 300px;
@@ -197,6 +186,4 @@ float: right;
     top: 6px;
     font-weight: 800;
     left: 37px;
-
-
 }
