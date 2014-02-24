@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet Quick Start Guide Example</title>
+  <title>NYC Property Tax Explorer</title>
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,8 +35,10 @@ NYC Property Tax Explorer!
 <div id="sidebar"></div>
 
 <div id="taxTabTemplate" class="tab">
+
   <div class="tabCloseButton">&#10006;</div>
   <div class="address"><span class="taxData"></span></div>
+
   <div class="bbl">
     <span class="taxTitle">Borough:</span><span class="borough taxData"></span>
     <span class="taxTitle">Block:</span><span class="block taxData"></span>
@@ -150,7 +152,7 @@ NYC Property Tax Explorer!
             g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
             var feature = g.selectAll("path")
-                    .data(data.features)
+            .data(data.features)
             .enter()
             .append("path")
             .attr('fill', function (d) {
@@ -170,7 +172,6 @@ NYC Property Tax Explorer!
             });
 
             feature.on('click', function (d) {
-
                 updateTabs(d.properties);
             });
 
@@ -235,20 +236,16 @@ NYC Property Tax Explorer!
       $(tab[0]).removeAttr('id').addClass('active');
       $('#sidebar').append(tab);
       tab.show();
-      // console.log(tab);
-      // console.log(tab[0]);
+
+      tab.find('.close').click(function (e) {
+           tab.remove();
+      })
   }
-
-
-
     // sidebar needs to have up to 3 tabs. When a property is clicked, it should put all the variables in a tab. When the 2nd is clicked, it should put it in the tab below. 3rd is same. When the 4th is clicked, it should remove the first tab and insert a new tab below. Tabs should have an exit circle to click and get out of the tab. If tab 1 is exited, move tabs 2 and 3 up. If tab 2 is clicked, move tab 3 up...
-
     // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
 
-
-
   function updateFlyout(d){
-      console.log(d);
+      //console.log(d);
       $('#flyoutAddress').html(d.propertyAddress);
       if (d.years) {
         $('#flyoutTax').html(toDollars(d.years[0].annualTax));
@@ -276,7 +273,6 @@ NYC Property Tax Explorer!
   }
 
 </script>
-
 
 </body>
 </html>

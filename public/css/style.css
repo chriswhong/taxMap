@@ -181,6 +181,7 @@ float: right;
     margin-bottom: 2px;
 }
 
+<<<<<<< HEAD
 #title {
     width: 300px;
     font-size: 20px;
@@ -197,4 +198,10 @@ float: right;
     font-weight: 800;
     left: 37px;
 
+=======
+.tab .close {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+>>>>>>> 646e1410b6c4f2b1eef6ab3a4510d9d8905e99d3
 }
