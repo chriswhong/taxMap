@@ -41,7 +41,7 @@ $(document).ready(function() {
         if (isZoom) {
             $('svg').css('display', 'none');
         }
-        d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
+        d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
             map.setView([lat, lon]);
             map.viewreset;
             $('svg').remove();
