@@ -7,5 +7,5 @@ var _ = require('lodash');
 // specific configuration
 module.exports = _.extend(
     require(__dirname + '/../config/env/all.js'),
-    require(__dirname + '/../config/env/' + ENV['NODE_ENV'] + '.js') || {}
+    require(__dirname + '/../config/env/' + process.env.NODE_ENV + '.js') || {}
 );
