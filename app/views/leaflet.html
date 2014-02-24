@@ -25,11 +25,17 @@
     
     </div>
 </div>
+
+<div id = "title">
+NYC Property Tax Explorer!
+</div>
+
 <div id="map"></div>
 
 <div id="sidebar"></div>
 
 <div id="taxTabTemplate" class="tab">
+  <div class="tabCloseButton">&#10006;</div>
   <div class="address"><span class="taxData"></span></div>
   <div class="bbl">
     <span class="taxTitle">Borough:</span><span class="borough taxData"></span>
@@ -96,9 +102,13 @@
 
     updatePolygons(false);
 
-    jQuery("#map").mousemove(function(e) {
+    $("#map").mousemove(function(e) {
         jQuery('#flyout')
         .css({'left':e.pageX-215,'top':e.pageY-jQuery(document).scrollTop()-120});
+    });
+
+    $('#sidebar').delegate('.tab','click',function(){
+        $(this).slideUp(500);
     });
 
     function updatePolygons(isZoom){
@@ -183,10 +193,10 @@
     var tabs = $('#sidebar').children('.tab');
 
     // if three tabs, kill top one.
-    if (tabs.length > 2) {
-      var first = $(tabs[0]);
-      $('#sidebar').children(":first").remove();
-    }
+    //if (tabs.length > 2) {
+    //  var first = $(tabs[0]);
+    //  $('#sidebar').children(":first").remove();
+    //}
 
     addTab(p);
   }
@@ -197,20 +207,21 @@
       var block = String(p.billingbbl).substring(1,6);
       var lot = String(p.billingbbl).substring(6,10);
 
-      var tab = $('#taxTabTemplate').clone();
+      var tab = $('#taxTabTemplate').clone().slideDown(150);
 
-      tab.find('.borough .taxData').html(borough);
-      tab.find('.block .taxData').html(block);
-      tab.find('.lot .taxData').html(lot);
+      tab.find('.borough.taxData').html(borough);
+      tab.find('.block.taxData').html(block);
+      tab.find('.lot.taxData').html(lot);
 
       tab.find('.address .taxData').html(p.propertyAddress);
       tab.find('.ownerName .taxData').html(p.ownerName);
       tab.find('.taxClass .taxData').html(p.taxClass);
 
-      tab.find('.stimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+      tab.find('.estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
       tab.find('.assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
       tab.find('.taxRate .taxData').html(p.years[0].taxRate);
       tab.find('.taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
+      tab.find('.exemptions .taxData').html(toDollars(p.years[0].taxBefore-p.years[0].annualTax));
       tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
       tab.find('.unitsTotal .taxData').html(p.unitsTotal);
       tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax/p.unitsTotal));
@@ -258,7 +269,7 @@
   }
 
   function toDollars(n){
-    if (!n) return 'undefined';
+    //if (!n) return 'undefined';
     if (typeof n == 'String') n = parseInt(n);
     var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1,').split('').reverse().join('').replace(/^[\,]/,'');
     return "$" + dollars;
@@ -266,8 +277,6 @@
 
 </script>
 
-<div class="tooltip">
-    <span id="val"></span>
-</div>
+
 </body>
 </html>

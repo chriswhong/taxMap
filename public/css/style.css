@@ -11,6 +11,10 @@ h2 {
     margin: 0;
 }
 
+#map {
+    position:fixed;
+}
+
  body {
         font-family: 'Maven Pro', sans-serif;
     }
@@ -40,9 +44,17 @@ h2 {
 #sidebar {
     position: absolute;
     top: 0;
-    bottom: 20%;
     right: 0;
+    width: 272px;
+
 }
+.tabCloseButton {
+    font-size: 19px;
+position: relative;
+left: -1px;
+top: -1px;
+float: right;
+    }
 
 .tab {
     width: 226px;
@@ -54,6 +66,8 @@ h2 {
     margin: 5px 10px;
     border-right: 3px solid #04364F;
     border-bottom: 3px solid #04364F;
+    display: inline-block;
+    float: right;
 }
 
 #flyout {
@@ -159,10 +173,28 @@ h2 {
   text-align: center;
 }
 
-.taxBillLink a:hover {
+.taxBillLink a:hover, .tabCloseButton:hover {
   cursor: pointer;
 }
 
 #sidebar div {
     margin-bottom: 2px;
+}
+
+#title {
+    width: 300px;
+    font-size: 20px;
+    height: 23px;
+    background: #16639A;
+    color: #fff;
+    padding: 12px;
+    margin: 5px 10px;
+    border-right: 3px solid #04364F;
+    border-bottom: 3px solid #04364F;
+    position: fixed;
+    z-index: 4000;
+    top: 6px;
+    font-weight: 800;
+    left: 37px;
+
 }
