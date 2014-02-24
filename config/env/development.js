@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    db: 'mongodb://localhost/taxMap',
+    db: ENV['MONGOHQ_URI'],
     app: {
         name: 'MEAN - A Modern Stack - Development'
     },
