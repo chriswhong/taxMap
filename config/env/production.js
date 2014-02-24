@@ -1,7 +1,5 @@
 'use strict';
 
-console.log('Fired from production.js');
-
 module.exports = {
     db: process.env.MONGOHQ_URI,
     app: {
