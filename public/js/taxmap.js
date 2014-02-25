@@ -3,13 +3,14 @@ $(document).ready(function() {
     var ZEROCLR = '#F00';
     var num_format = d3.format(",");
 
-    var map = L.map('map').setView([40.78233, -73.97919], 16);
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48569/256/{z}/{x}/{y}.png', {
+    var map = L.map('map',{inertia:false}).setView([40.78233, -73.97919], 16);
+    L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
         maxZoom: 20,
-        minZoom: 16,
+        minZoom: 17,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
     }).addTo(map);
     map.on('dragend', function(e) {
+        $('#spinner').fadeIn(100);
         updatePolygons(false);
     });
     map.on('zoomend', function(e) {
@@ -41,7 +42,12 @@ $(document).ready(function() {
         if (isZoom) {
             $('svg').css('display', 'none');
         }
-        d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
+
+
+            //d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
+         
+            d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
+            $('#spinner').fadeOut(100);
             map.setView([lat, lon]);
             map.viewreset;
             $('svg').remove();

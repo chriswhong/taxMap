@@ -187,3 +187,10 @@ path:hover {
     font-weight: 800;
     left: 37px;
 }
+
+#spinner {
+    float: right;
+    position: relative;
+    top: -3px;  
+    display:none;
+}
