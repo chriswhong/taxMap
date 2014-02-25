@@ -3,7 +3,7 @@ $(document).ready(function() {
     var ZEROCLR = '#F00';
     var num_format = d3.format(",");
 
-    var map = L.map('map',{inertia:false}).setView([40.78233, -73.97919], 16);
+    var map = L.map('map',{inertia:false}).setView([40.78233, -73.97919], 17);
     L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
         maxZoom: 20,
         minZoom: 17,
@@ -102,19 +102,23 @@ $(document).ready(function() {
         tab.find('.address .taxData').html(p.propertyAddress);
         tab.find('.ownerName .taxData').html(p.ownerName);
         tab.find('.taxClass .taxData').html(p.taxClass);
-        tab.find('.estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
-        tab.find('.assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
-        tab.find('.taxRate .taxData').html(p.years[0].taxRate);
-        tab.find('.taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
-        tab.find('.exemptions .taxData').html(toDollars(p.years[0].taxBefore - p.years[0].annualTax));
-        tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
-        tab.find('.unitsTotal .taxData').html(p.unitsTotal);
-        tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax / p.unitsTotal));
-        tab.find('.taxBillLink a').click(function(e) {
-            e.preventDefault();
-            var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
-            window.open(billUrl);
-        });
+
+        if(p.condoNumber == 0) {
+            tab.find('.estimatedValue .taxData').html(toDollars(p.years[0].estimatedValue));
+            tab.find('.assessedValue .taxData').html(toDollars(p.years[0].assessedValue));
+            tab.find('.taxRate .taxData').html(p.years[0].taxRate);
+            tab.find('.taxBefore .taxData').html(toDollars(p.years[0].taxBefore));
+            tab.find('.exemptions .taxData').html(toDollars(p.years[0].taxBefore - p.years[0].annualTax));
+            tab.find('.annualTax .taxData').html(toDollars(p.years[0].annualTax));
+            tab.find('.unitsTotal .taxData').html(p.unitsTotal);
+            tab.find('.taxPerUnit .taxData').html(toDollars(p.years[0].annualTax / p.unitsTotal));
+            tab.find('.taxBillLink a').click(function(e) {
+                e.preventDefault();
+                var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
+                window.open(billUrl);
+            });
+        }
+
         $(tab[0]).removeAttr('id').addClass('active');
         $('#sidebar').append(tab);
         tab.show();
@@ -126,9 +130,12 @@ $(document).ready(function() {
     // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
 
     function updateFlyout(d) {
+        console.log(d);
         $('#flyoutAddress').html(d.propertyAddress);
-        if (d.years) {
+        if (d.years[0].annualTax) {
             $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+        } else {
+            $('#flyoutTax').html("n/a");
         }
         clearTimeout(flyoutTimer);
         $('#flyout').fadeIn(50);

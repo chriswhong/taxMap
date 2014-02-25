@@ -61,6 +61,7 @@ function makeGeoJson(taxlots) {
         properties.taxClass = taxlot.taxClass;
         properties.years = taxlot.years;
         properties.unitsTotal = taxlot.plutoData.UnitsTotal;
+        properties.condoNumber = taxlot.plutoData.CondoNo;
 
         var feature = new Object;
         feature.type = "Feature";
