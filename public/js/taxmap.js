@@ -3,14 +3,14 @@ $(document).ready(function() {
     var ZEROCLR = '#F00';
     var num_format = d3.format(",");
 
-    var map = L.map('map',{inertia:false}).setView([40.78233, -73.97919], 17);
+    var map = L.map('map',{inertia:false}).setView([40.737096, -73.964767], 13);
     L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
         maxZoom: 20,
-        minZoom: 17,
+        minZoom: 6,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
     }).addTo(map);
     map.on('dragend', function(e) {
-        $('#spinner').fadeIn(100);
+        
         updatePolygons(false);
     });
     map.on('zoomend', function(e) {
@@ -34,7 +34,9 @@ $(document).ready(function() {
     });
 
     function updatePolygons(isZoom) {
-        $(".map-pane-overlay")
+        if (map._zoom > 16) { //don't draw polygons when zoomed below 17
+          $('#spinner').fadeIn(100);
+         // $(".map-pane-overlay")
         var bboxString = map.getBounds().toBBoxString();
         var center = map.getCenter();
         var lat = center.lat;
@@ -44,9 +46,9 @@ $(document).ready(function() {
         }
 
 
-            //d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
+            d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
          
-            d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
+            //d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
             $('#spinner').fadeOut(100);
             map.setView([lat, lon]);
             map.viewreset;
@@ -82,7 +84,11 @@ $(document).ready(function() {
                     $("#flyout").fadeOut(50);
                 }, 50);
             });
-        });
+        });  
+        } else {
+            $('svg').css('display', 'none');
+        }
+        
     }
 
     function projectPoint(x, y) {
