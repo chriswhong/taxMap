@@ -6,7 +6,7 @@ exports.render = function(req, res) {
     });
 };
 
-exports.geo = function(req, res) {
+exports.main = function(req, res) {
   res.render('leaflet', {
     //stuff    
   });
