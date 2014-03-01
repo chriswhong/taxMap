@@ -46,9 +46,9 @@ $(document).ready(function() {
         }
 
 
-            d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
+            //d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
          
-            //d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
+            d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
             $('#spinner').fadeOut(100);
             map.setView([lat, lon]);
             map.viewreset;
