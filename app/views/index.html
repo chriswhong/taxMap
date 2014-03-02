@@ -1,7 +1,83 @@
-{% extends 'layouts/default.html' %}
-{% block content %}
-    <section data-ng-view />
-    <script type="text/javascript">
-        window.user = {{user|safe}};
-    </script>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NYC Property Tax Explorer</title>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,500,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+</head>
+<body>
+<div id = "flyout">
+    <div id = "flyoutTop">
+        <div id = "flyoutAddress"></div>
+        Annual Tax:<div id = "flyoutTax"></div>
+        <div class = "flyoutClick">Click property for details...</div>
+    </div>
+    <div id = "flyoutBottom">
+
+    </div>
+</div>
+
+<div id = "title">
+
+    NYC Property Tax Explorer!
+    <div id = "spinner">
+        <img src = "img/spinner.gif">
+    </div>
+</div>
+
+
+<div id="map"></div>
+
+<div id="sidebar"></div>
+
+<div id="taxTabTemplate" class="tab">
+
+    <div class="tabCloseButton">&#10006;</div>
+    <div class="address"><span class="taxData"></span></div>
+
+    <div class="bbl">
+        <span class="taxTitle">Borough:</span><span class="borough taxData"></span>
+        <span class="taxTitle">Block:</span><span class="block taxData"></span>
+        <span class="taxTitle">Lot:</span><span class="lot taxData"></span>
+    </div>
+    <div class="ownerName">
+        <span class="taxTitle">Owner:</span><span class="taxData"></span>
+    </div>
+    <div class="unitsTotal"><span class="taxTitle">Units:</span>&nbsp;<span class="taxData"></span></div>
+    <div class="taxClass"><span class="taxTitle">Tax Class:</span>&nbsp;<span class="taxData"></span></div>
+
+    <div class="estimatedValue"><span class="taxTitle">Estimated Market Value:</span>&nbsp;<span class="taxData"></span></div>
+    <div class="assessedValue"><span class="taxTitle">Taxable Assessed Value:</span>&nbsp;<span class="taxData"></span></div>
+    <div class="taxRate"><span class="taxTitle">Tax Rate:</span>&nbsp;<span class="taxData"></span></div>
+
+    <div class="taxBefore"><span class="taxTitle">Tax Before Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+    <div class="exemptions"><span class="taxTitle">Exemptions:</span>&nbsp;<span class="taxData"></span></div>
+    <div class="annualTax"><span class="taxTitle">Annual Tax:</span>&nbsp;<span class="taxData"></span></div>
+
+    <div class="taxPerUnit"><span class="taxTitle">~Tax Per Unit:</span>&nbsp;<span class="taxData"></span></div>
+
+    <div class="taxBillLink"><a>11/22/2013 Tax Bill</a></div>
+
+</div>
+
+<script src="js/leaflet.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script src="js/colorbrewer.js"></script>
+<script src="js/taxmap.js"></script>
+
+
+
+
+</body>
+</html>

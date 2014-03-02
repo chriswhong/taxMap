@@ -13,8 +13,8 @@ var mongoose = require('mongoose'),
  */
 exports.all = function(req, res) {
     // TaxLot.find({billingbbl:1018880063}).exec(function(err, taxlots) {
-    
-    // expecting bbox=bottom,left,top,right 
+
+    // expecting bbox=bottom,left,top,right
     // like: http://localhost:3000/taxlots?bbox=40.785496,-73.980560,40.795342,-73.970861
 
     if (!req.query.bbox) res.jsonp({});
