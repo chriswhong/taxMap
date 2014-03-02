@@ -7,11 +7,11 @@
 var MongoClient = require('mongodb').MongoClient,
   Q = require('Q');
 
-
 var lotCalc = function () {
 
   var dbString = 'mongodb://127.0.0.1:27017/taxMap';
 
+  //For testing purposes does not save to database.
   var calcOne = function () {
     MongoClient.connect(dbString, function (err, db) {
       getOneDistrict().then(function (document) {
@@ -23,6 +23,7 @@ var lotCalc = function () {
     });
   };
 
+  //Will get all districts, calculate all sums and save all to database.
   var calcAll = function() {
     MongoClient.connect(dbString, function (err, db) {
       getAllDistricts(db).then(function (documents) {

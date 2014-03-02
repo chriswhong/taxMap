@@ -34,10 +34,6 @@ $(document).ready(function() {
     });
   });
 
-  $('#sidebar').delegate('.tab', 'click', function() {
-    $(this).slideUp(500);
-  });
-
   function updatePolygons(isZoom) {
 
     $('#spinner').fadeIn(100);
@@ -199,7 +195,6 @@ $(document).ready(function() {
     //Don't add the property twice.
     var tabs = $sideBar.find('.tab');
     for (var i = 0, len = tabs.length; i < len; i++) {
-      console.log($(tabs[i]).attr('id'));
       if($(tabs[i]).attr('id') === borough + block + lot) { return; }
     }
 
@@ -207,8 +202,10 @@ $(document).ready(function() {
     $(tab[0]).attr('id', borough + block + lot);
     $sideBar.append(tab);
     tab.show();
-    tab.find('.close').click(function(e) {
-      tab.remove();
+    tab.click(function(e) {
+      tab.slideUp(500, function () {
+        tab.remove();
+      });
     });
   }
 
@@ -229,7 +226,7 @@ $(document).ready(function() {
 
   function taxLotFlyOut(d) {
     $('#flyoutAddress').html(d.propertyAddress);
-    if (d.years[0].annualTax) {
+    if (d.years && d.years[0].annualTax) {
       $('#flyoutTax').html(toDollars(d.years[0].annualTax));
     } else {
       $('#flyoutTax').html('n/a');
