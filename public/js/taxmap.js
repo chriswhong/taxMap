@@ -1,38 +1,38 @@
 $(document).ready(function() {
 
   var UNDEFINEDCLR = '#000',
-    ZEROCLR = '#F00',
-    numFormat = d3.format(','),
-    map = L.map('map',{inertia:false}).setView([40.737096, -73.964767], 13),
-    flyoutTimer;
+  ZEROCLR = '#F00',
+  numFormat = d3.format(','),
+  map = L.map('map',{inertia:false}).setView([40.737096, -73.964767], 13),
+  flyoutTimer;
 
-    
-    var geoSearch = new L.Control.GeoSearch({
-            provider: new L.GeoSearch.Provider.Google()
-        }).addTo(map);
 
-    $('#addressSearch').keypress(function(e){
-            geoSearch._onKeyUp(e);
-            
-    });
+  var geoSearch = new L.Control.GeoSearch({
+    provider: new L.GeoSearch.Provider.Google()
+  }).addTo(map);
 
-    L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
-        maxZoom: 20,
-        minZoom: 6,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-    }).addTo(map);
-    map.on('dragend', function(e) {
-        
-        updatePolygons(false);
-    });
-    map.on('zoomend', function(e) {
-        updatePolygons(true);
-    });
-    map.on('viewreset', function(e) {
-         updatePolygons(true);
-    })
+  $('#addressSearch').keypress(function(e){
+    geoSearch._onKeyUp(e);
 
-    
+  });
+
+  L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    minZoom: 6,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+  }).addTo(map);
+  map.on('dragend', function(e) {
+
+    updatePolygons(false);
+  });
+  map.on('zoomend', function(e) {
+    updatePolygons(true);
+  });
+  map.on('viewreset', function(e) {
+   updatePolygons(true);
+ })
+
+
 
 
   var colorLots = d3.scale.quantile();
@@ -51,17 +51,13 @@ $(document).ready(function() {
   });
 
 
-    function updatePolygons(isZoom) {
-        if (map._zoom > 16) { //don't draw polygons when zoomed more than 16
-          $('#spinner').fadeIn(100);
-         // $(".map-pane-overlay")
-        var bboxString = map.getBounds().toBBoxString();
-        var center = map.getCenter();
-        var lat = center.lat;
-        var lon = center.lng;
-        if (isZoom) {
-            $('svg').css('display', 'none');
-        }
+  function updatePolygons(isZoom) {
+       
+         var bboxString = map.getBounds().toBBoxString();
+         var center = map.getCenter();
+         var lat = center.lat;
+         var lon = center.lng;
+    
 
 
     if (map._zoom > 16) { //draw tax lots at zoom levels 17+.
@@ -71,7 +67,8 @@ $(document).ready(function() {
     } else { //anything more zoomed out draw nothing.
       $('svg').css('display', 'none');
     }
-  }
+  
+}
 
   function getColor(d, type) {
     var value;
@@ -79,19 +76,19 @@ $(document).ready(function() {
 
     switch (type) {
       case 'communityDistricts':
-        if(d.properties && d.properties.taxTotal) {
-          value = d.properties.taxTotal;
-        }
-        colorFunction = colorDistricts;
-        break;
+      if(d.properties && d.properties.taxTotal) {
+        value = d.properties.taxTotal;
+      }
+      colorFunction = colorDistricts;
+      break;
       case 'taxlots':
-        if(d.properties && d.properties.years) {
-          value = d.properties.years[0].annualTax;
-        }
-        colorFunction = colorLots;
-        break;
+      if(d.properties && d.properties.years) {
+        value = d.properties.years[0].annualTax;
+      }
+      colorFunction = colorLots;
+      break;
       default :
-        break;
+      break;
     }
 
     if (value) {
@@ -104,33 +101,33 @@ $(document).ready(function() {
   }
 
   function drawMap(bboxString, center, lat, lon, type) {
-    d3.json('http://localhost:3000/' + type + '?bbox=' + bboxString, function(data) {
+    //d3.json('http://localhost:3000/' + type + '?bbox=' + bboxString, function(data) {
 
-      //d3.json('http://nyctaxmap.herokuapp.com/taxlots?bbox=' + bboxString, function(data) {
-      $('#spinner').fadeOut(100);
-      map.setView([lat, lon]);
-      map.viewreset;
+      d3.json('http://nyctaxmap.herokuapp.com/' + type + '?bbox=' + bboxString, function(data) {
+        $('#spinner').fadeOut(100);
+        map.setView([lat, lon]);
+        map.viewreset;
 
-      $('svg').remove();
-      var svg = d3.select(map.getPanes().overlayPane)
+        $('svg').remove();
+        var svg = d3.select(map.getPanes().overlayPane)
         .append('svg')
         .attr('width', window.screen.width)
         .attr('height', window.screen.height);
-      var g = svg.append('g').attr('class', 'leaflet-zoom-hide');
-      var transform = d3.geo.transform({ point: projectPoint });
-      path = d3.geo.path().projection(transform);
-      bounds = path.bounds(data);
-      var topLeft = bounds[0],
+        var g = svg.append('g').attr('class', 'leaflet-zoom-hide');
+        var transform = d3.geo.transform({ point: projectPoint });
+        path = d3.geo.path().projection(transform);
+        bounds = path.bounds(data);
+        var topLeft = bounds[0],
         bottomRight = bounds[1];
 
-      svg.attr('width', bottomRight[0] - topLeft[0])
+        svg.attr('width', bottomRight[0] - topLeft[0])
         .attr('height', bottomRight[1] - topLeft[1])
         .style('left', topLeft[0] + 'px')
         .style('top', topLeft[1] + 'px');
 
-      g.attr('transform', 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
+        g.attr('transform', 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
 
-      var feature = g.selectAll('path')
+        var feature = g.selectAll('path')
         .data(data.features)
         .enter()
         .append('path')
@@ -140,33 +137,33 @@ $(document).ready(function() {
 
         .attr('d', path);
 
-      feature.on('mouseover', function(d) {
-        updateFlyout(d.properties, type);
+        feature.on('mouseover', function(d) {
+          updateFlyout(d.properties, type);
+        });
+
+
+        feature.on('click', function(d) {
+          setPathOnclick(d.properties, type);
+        });
+
+        feature.on('mouseout', function(d) {
+          flyoutTimer = setTimeout(function() {
+            $('#flyout').fadeOut(50);
+          }, 50);
+        });
+
       });
-
-
-      feature.on('click', function(d) {
-        setPathOnclick(d.properties, type);
-      });
-
-      feature.on('mouseout', function(d) {
-        flyoutTimer = setTimeout(function() {
-          $('#flyout').fadeOut(50);
-        }, 50);
-      });
-
-    });
-  }
+}
 
   function setPathOnclick(properties, type) {
     switch (type) {
       case 'taxlots':
-        addTab(properties);
-        break;
+      addTab(properties);
+      break;
       case 'communityDistricts':
-        break;
+      break;
       default:
-        break;
+      break;
     }
 
     return false;
@@ -209,24 +206,24 @@ $(document).ready(function() {
         var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
         window.open(billUrl);
       });
-    
 
-        $('#sidebar').stop().animate({
-  scrollTop: $('#sidebar')[0].scrollHeight
-}, 800);
+
+      $('#sidebar').stop().animate({
+        scrollTop: $('#sidebar')[0].scrollHeight
+      }, 800);
     }
     // sidebar needs to have up to 3 tabs. When a property is clicked, it should put all the variables in a tab. When the 2nd is clicked, it should put it in the tab below. 3rd is same. When the 4th is clicked, it should remove the first tab and insert a new tab below. Tabs should have an exit circle to click and get out of the tab. If tab 1 is exited, move tabs 2 and 3 up. If tab 2 is clicked, move tab 3 up...
     // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
 
     function updateFlyout(d) {
-        $('#flyoutAddress').html(d.propertyAddress);
-        if (d.years[0].annualTax) {
-            $('#flyoutTax').html(toDollars(d.years[0].annualTax));
-        } else {
-            $('#flyoutTax').html("n/a");
-        }
-        clearTimeout(flyoutTimer);
-        $('#flyout').fadeIn(50);
+      $('#flyoutAddress').html(d.propertyAddress);
+      if (d.years[0].annualTax) {
+        $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+      } else {
+        $('#flyoutTax').html("n/a");
+      }
+      clearTimeout(flyoutTimer);
+      $('#flyout').fadeIn(50);
 
     }
 
@@ -250,13 +247,13 @@ $(document).ready(function() {
   function updateFlyout(d, type) {
     switch(type) {
       case 'taxlots':
-        taxLotFlyOut(d);
-        break;
+      taxLotFlyOut(d);
+      break;
       case 'communityDistricts':
-        districtFlyOut(d);
-        break;
+      districtFlyOut(d);
+      break;
       default:
-        break;
+      break;
     }
     if(flyoutTimer) { clearTimeout(flyoutTimer); }
     $('#flyout').fadeIn(50);
@@ -293,4 +290,6 @@ $(document).ready(function() {
     var dollars = n.toFixed(0).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g, '$1,').split('').reverse().join('').replace(/^[\,]/, '');
     return '$' + dollars;
   }
+
+
 });

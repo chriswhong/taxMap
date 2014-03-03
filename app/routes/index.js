@@ -6,6 +6,6 @@ module.exports = function(app) {
     var index = require('../controllers/index');
     app.get('/', index.main);
 
-    app.get('/panel', index.panel);
+    //app.get('/panel', index.panel);
 
 };
