@@ -1,23 +1,39 @@
 $(document).ready(function() {
+
   var UNDEFINEDCLR = '#000',
     ZEROCLR = '#F00',
     numFormat = d3.format(','),
     map = L.map('map',{inertia:false}).setView([40.737096, -73.964767], 13),
     flyoutTimer;
 
-  L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
-    maxZoom: 20,
-    minZoom: 6,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
-      '<a href="http://cloudmade.com">CloudMade</a>'
-  }).addTo(map);
-  map.on('dragend', function(e) {
-    updatePolygons(false);
-  });
-  map.on('zoomend', function(e) {
-    updatePolygons(true);
-  });
+    
+    var geoSearch = new L.Control.GeoSearch({
+            provider: new L.GeoSearch.Provider.Google()
+        }).addTo(map);
+
+    $('#addressSearch').keypress(function(e){
+            geoSearch._onKeyUp(e);
+            
+    });
+
+    L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        minZoom: 6,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    }).addTo(map);
+    map.on('dragend', function(e) {
+        
+        updatePolygons(false);
+    });
+    map.on('zoomend', function(e) {
+        updatePolygons(true);
+    });
+    map.on('viewreset', function(e) {
+         updatePolygons(true);
+    })
+
+    
+
 
   var colorLots = d3.scale.quantile();
   var colorDistricts = d3.scale.quantile();
@@ -34,17 +50,19 @@ $(document).ready(function() {
     });
   });
 
-  function updatePolygons(isZoom) {
 
-    $('#spinner').fadeIn(100);
-    // $('.map-pane-overlay')
-    var bboxString = map.getBounds().toBBoxString();
-    var center = map.getCenter();
-    var lat = center.lat;
-    var lon = center.lng;
-    if (isZoom) {
-      $('svg').css('display', 'none');
-    }
+    function updatePolygons(isZoom) {
+        if (map._zoom > 16) { //don't draw polygons when zoomed more than 16
+          $('#spinner').fadeIn(100);
+         // $(".map-pane-overlay")
+        var bboxString = map.getBounds().toBBoxString();
+        var center = map.getCenter();
+        var lat = center.lat;
+        var lon = center.lng;
+        if (isZoom) {
+            $('svg').css('display', 'none');
+        }
+
 
     if (map._zoom > 16) { //draw tax lots at zoom levels 17+.
       drawMap(bboxString, center, lat, lon, 'taxlots');
@@ -119,6 +137,7 @@ $(document).ready(function() {
         .attr('fill', function(d) {
           return getColor(d, type);
         })
+
         .attr('d', path);
 
       feature.on('mouseover', function(d) {
@@ -190,6 +209,25 @@ $(document).ready(function() {
         var billUrl = 'http://nycprop.nyc.gov/nycproperty/StatementSearch?bbl=' + p.billingbbl + '&stmtDate=20131122&stmtType=SOA';
         window.open(billUrl);
       });
+    
+
+        $('#sidebar').stop().animate({
+  scrollTop: $('#sidebar')[0].scrollHeight
+}, 800);
+    }
+    // sidebar needs to have up to 3 tabs. When a property is clicked, it should put all the variables in a tab. When the 2nd is clicked, it should put it in the tab below. 3rd is same. When the 4th is clicked, it should remove the first tab and insert a new tab below. Tabs should have an exit circle to click and get out of the tab. If tab 1 is exited, move tabs 2 and 3 up. If tab 2 is clicked, move tab 3 up...
+    // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
+
+    function updateFlyout(d) {
+        $('#flyoutAddress').html(d.propertyAddress);
+        if (d.years[0].annualTax) {
+            $('#flyoutTax').html(toDollars(d.years[0].annualTax));
+        } else {
+            $('#flyoutTax').html("n/a");
+        }
+        clearTimeout(flyoutTimer);
+        $('#flyout').fadeIn(50);
+
     }
 
     //Don't add the property twice.
