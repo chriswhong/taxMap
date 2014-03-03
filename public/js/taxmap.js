@@ -4,6 +4,16 @@ $(document).ready(function() {
     var num_format = d3.format(",");
 
     var map = L.map('map',{inertia:false}).setView([40.737096, -73.964767], 13);
+    
+    var geoSearch = new L.Control.GeoSearch({
+            provider: new L.GeoSearch.Provider.Google()
+        }).addTo(map);
+
+    $('#addressSearch').keypress(function(e){
+            geoSearch._onKeyUp(e);
+            
+    });
+
     L.tileLayer('http://{s}.tile.cloudmade.com/CFDDEF4CF0DE4C03830980EBAC21E316/48569/256/{z}/{x}/{y}.png', {
         maxZoom: 20,
         minZoom: 6,
@@ -16,6 +26,11 @@ $(document).ready(function() {
     map.on('zoomend', function(e) {
         updatePolygons(true);
     });
+    map.on('viewreset', function(e) {
+         updatePolygons(true);
+    })
+
+    
 
     var color = d3.scale.quantile();
     color.domain([0, 1000000]).range(colorbrewer.Greens[9]);
@@ -34,7 +49,7 @@ $(document).ready(function() {
     });
 
     function updatePolygons(isZoom) {
-        if (map._zoom > 16) { //don't draw polygons when zoomed below 17
+        if (map._zoom > 16) { //don't draw polygons when zoomed more than 16
           $('#spinner').fadeIn(100);
          // $(".map-pane-overlay")
         var bboxString = map.getBounds().toBBoxString();
@@ -46,9 +61,9 @@ $(document).ready(function() {
         }
 
 
-            //d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
+            d3.json("http://localhost:3000/taxlots?bbox=" + bboxString, function(data) {
          
-            d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
+            //d3.json("http://nyctaxmap.herokuapp.com/taxlots?bbox=" + bboxString, function(data) {
             $('#spinner').fadeOut(100);
             map.setView([lat, lon]);
             map.viewreset;
@@ -131,12 +146,16 @@ $(document).ready(function() {
         tab.find('.close').click(function(e) {
             tab.remove();
         })
+    
+
+        $('#sidebar').stop().animate({
+  scrollTop: $('#sidebar')[0].scrollHeight
+}, 800);
     }
     // sidebar needs to have up to 3 tabs. When a property is clicked, it should put all the variables in a tab. When the 2nd is clicked, it should put it in the tab below. 3rd is same. When the 4th is clicked, it should remove the first tab and insert a new tab below. Tabs should have an exit circle to click and get out of the tab. If tab 1 is exited, move tabs 2 and 3 up. If tab 2 is clicked, move tab 3 up...
     // first step - clone the taxTabTemplate when a property is clicked, and fill in the appropriate fields.
 
     function updateFlyout(d) {
-        console.log(d);
         $('#flyoutAddress').html(d.propertyAddress);
         if (d.years[0].annualTax) {
             $('#flyoutTax').html(toDollars(d.years[0].annualTax));

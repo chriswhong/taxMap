@@ -11,3 +11,7 @@ exports.main = function(req, res) {
     //stuff    
   });
 };
+
+exports.panel = function(req, res) {
+ res.send("hello");
+};
