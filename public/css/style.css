@@ -275,9 +275,20 @@ path:hover {
     top: 82px;
     margin: 0 auto;
     font-size: 13px;
+    height: 460px;
 }
 
 .aboutTitle {
     font-size: 26px;
     margin-bottom: 9px;
+}
+#about img {
+    position: absolute;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+}
+#twitter-widget-0 {
+    margin-top: 14px;
+    margin-left: 13px;
 }

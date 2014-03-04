@@ -48,6 +48,8 @@
         
 
       </ul>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://nyctaxmap.herokuapp.com" data-text="Explore NYC property taxes on this interactive map!" data-via="chris_whong" data-hashtags="betaNYC">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
       <form class="navbar-form navbar-right" role="form">
         <div class="form-group"><input id = "addressSearch" type="text" placeholder="search for address..." class = "form-control" style = "width:250px">
@@ -64,7 +66,7 @@
 </div>
 <div id = "about">
   <div class="aboutCloseButton">&#10006;</div>
-  <div class = "aboutTitle">About</div><img src = "http://betanyc.us/images/appleBlack.png">
+  <div class = "aboutTitle">About</div>
   <p>This map allows you to visually explore NYC property tax bills at the taxlot level.  Zoom in on an area, hover over a property for basic info, and click on a property for full info and a link to its latest tax bill. We started with Manhattan as a proof of concept, but the other boroughs will be live soon.</p>
   <p>About the data:  <a href = "http://nycprop.nyc.gov/nycproperty/nynav/jsp/selectbbl.jsp">We retreived over 40,000 individual PDF tax bills</a>, extracted the Estimated Market Value, Assessed Value, Building Type, Tax Rate, and Annual Tax. These data were joined to <a href = "http://www.nyc.gov/html/dcp/html/bytes/dwn_pluto_mappluto.shtml#mappluto">MapPLUTO</a>, an open dataset containing detailed geometries for NYC's properties, made available by the NYC Department of City Planning</p>
 
@@ -75,6 +77,8 @@
   <p>Condo units each receive an individual bill.  Condo buildings are shaded in blue and do not have building-level tax bills. We hope to incorporate condo bills in the future</p>
 
   <p>Special Thanks to: Steve Romalewski, Jessie Braden, Tom Swanson, Brice Lin, Abby Bouchon, Fahad Quraishi, and James Ber.  Support Open Data!</p>
+
+  <img src = "http://betanyc.us/images/appleBlack.png">
 </div>
 <div id = "legendFlyout" class = 'navbar-inverse'>Flyout</div>
 <div id = "flyout">
