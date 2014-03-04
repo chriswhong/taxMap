@@ -79,6 +79,7 @@ L.Control.GeoSearch = L.Control.extend({
     },
 
     geosearch: function (qry) {
+        console.log("Geosearch init with query: " + qry);
         try {
             var provider = this._config.provider;
 
@@ -194,6 +195,7 @@ L.Control.GeoSearch = L.Control.extend({
     },
 
     _onKeyUp: function (e) {
+
         var esc = 27,
             enter = 13,
             queryBox = document.getElementById('addressSearch');
@@ -202,6 +204,8 @@ L.Control.GeoSearch = L.Control.extend({
             queryBox.value = '';
             this._map._container.focus();
         } else if (e.keyCode === enter) {
+            e.preventDefault();
+            $('#mapsvg').remove();
             this.geosearch(queryBox.value);
         }
     }

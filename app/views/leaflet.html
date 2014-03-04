@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NYC Property Tax Explorer</title>
+  <title>NYC Property Tax Explorer (beta)</title>
 
   <meta charset="utf-8" />
 
@@ -22,7 +22,7 @@
 <div id="flyout">
     <div id="flyoutTop">
         <div id="flyoutAddress"></div>
-        Annual Tax:<div id="flyoutTax"></div>
+        <div id="flyoutTax"></div>
         <div class="flyoutClick">Click property for details...</div>
     </div>
     <div id="flyoutBottom">
@@ -38,19 +38,19 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-map-marker" style = "font-size: 23px"></span> NYC Property Tax Explorer</a>
+      <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-map-marker" style = "font-size: 23px"></span> NYC Property Tax Explorer (beta)</a>
 
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">FAQ</a></li>
+        <li><a id = "aboutLink" href="#about">About</a></li>
+        
 
       </ul>
 
       <form class="navbar-form navbar-right" role="form">
-        <div class="form-group"><input id = "addressSearch" type="text" placeholder="search for address..." class = "form-control">
+        <div class="form-group"><input id = "addressSearch" type="text" placeholder="search for address..." class = "form-control" style = "width:250px">
         </div>
       </form>
       <div id = "spinner">
@@ -59,6 +59,24 @@
    </div>
  </div>
 </div>
+<div id = "footer" class = 'navbar-inverse'>
+<div class = "legendTitle">Annual Tax:</div>
+</div>
+<div id = "about">
+  <div class="aboutCloseButton">&#10006;</div>
+  <div class = "aboutTitle">About</div>
+  <p>This map allows you to visually explore NYC property tax bills at the taxlot level.  Zoom in on an area, hover over a property for basic info, and click on a property for full info and a link to its latest tax bill. We started with Manhattan as a proof of concept, but the other boroughs will be live soon.</p>
+  <p>About the data:  <a href = "http://nycprop.nyc.gov/nycproperty/nynav/jsp/selectbbl.jsp">We retreived over 40,000 individual PDF tax bills</a>, extracted the Estimated Market Value, Assessed Value, Building Type, Tax Rate, and Annual Tax. These data were joined to <a href = "http://www.nyc.gov/html/dcp/html/bytes/dwn_pluto_mappluto.shtml#mappluto">MapPLUTO</a>, an open dataset containing detailed geometries for NYC's properties, made available by the NYC Department of City Planning</p>
+
+  <p>Made by <a href = "http://chriswhong.com/">Chris Whong</a>, <a href = " http://grizzlebees.com/ ">Akil Harris</a>, and <a href = "https://twitter.com/ameensol">Ameen Solemani</a> at <a href = "http://blog.betanyc.org/post/77719033908/codeacrossnyc-2014-wrap-up">Code Across NYC</a>, a civic hackathon hosted by <a href = "http://betanyc.us/">BetaNYC, New York City's civic technology and open government vanguard</a>.  
+
+  <p>Caveats: The "Annual Tax" is as it appeared on the 11/23/2013 tax bill for each property.  Additional discounts/exemptions/abatements may apply. The developers make no claim as to the accuracy of the data contained herein.  Users shoud verify all information from a reliable source. </p>
+
+  <p>Condo units each receive an individual bill.  Condo buildings are shaded in blue and do not have building-level tax bills. We hope to incorporate condo bills in the future</p>
+
+  <p>Special Thanks to: Steve Romalewski, Jessie Braden, Tom Swanson, Brice Lin, Abby Bouchon, Fahad Quraishi, and James Ber.  Support Open Data!</p>
+</div>
+<div id = "legendFlyout" class = 'navbar-inverse'>Flyout</div>
 <div id = "flyout">
   <div id = "flyoutTop">
     <div id = "flyoutAddress"></div>

@@ -48,12 +48,13 @@ path:hover {
     overflow: scroll;
 }
 
-.tabCloseButton {
+.tabCloseButton, .aboutCloseButton {
     font-size: 19px;
     position: relative;
     left: -1px;
     top: -1px;
     float: right;
+    cursor:pointer;
 }
 
 .tab {
@@ -218,4 +219,65 @@ path:hover {
 
 .leaflet-control-geosearch {
     display:none;
+}
+
+#footer {
+    color:#fff;
+    position: absolute;
+    bottom: -4px;
+    left: -4px;
+    height: 34px;
+    width: 465px;
+    z-index: 4000;
+    border-radius: 5px;
+    display:none;
+}
+
+.legendTitle {
+    font-size: 16px;
+    margin-left: 13px;
+    margin-top: 4px;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+
+#footersvg circle {
+    stroke: #FFF;
+    stroke-width: 1.5px;
+}
+#legendFlyout {
+   width: 72px;
+    height: 31px;
+    position: absolute;
+    bottom: 20px;
+    z-index: 1000;
+    border-radius: 3px;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    padding-top: 3px;
+    display:none;
+}
+
+#about {
+    background: #16639A;
+    color: #fff;
+    padding: 12px;
+    border-right: 3px solid #04364F;
+    border-bottom: 3px solid #04364F;
+    position: absolute;
+  
+    width: 650px;
+    z-index: 5000;
+    left: 0;
+    right: 0;
+    top: 82px;
+    margin: 0 auto;
+    font-size: 13px;
+}
+
+.aboutTitle {
+    font-size: 26px;
+    margin-bottom: 9px;
 }
