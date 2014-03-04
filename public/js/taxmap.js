@@ -183,9 +183,9 @@ $(document).ready(function() {
 
                 function drawMap(bboxString, center, lat, lon, type) {
                   $('#spinner').fadeIn(100);
-                  d3.json('http://localhost:3000/' + type + '?bbox=' + bboxString, function(data) {
+                  //d3.json('http://localhost:3000/' + type + '?bbox=' + bboxString, function(data) {
 
-      //d3.json('http://nyctaxmap.herokuapp.com/' + type + '?bbox=' + bboxString, function(data) {
+      d3.json('http://nyctaxmap.herokuapp.com/' + type + '?bbox=' + bboxString, function(data) {
         $('#spinner').fadeOut(100);
         map.setView([lat, lon]);
         map.viewreset;
