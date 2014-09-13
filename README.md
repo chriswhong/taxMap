@@ -18,3 +18,5 @@ Condo units each receive an individual bill. Condo buildings are shaded in blue 
 
 ###Special Thanks to
 Steve Romalewski, Jessie Braden, Max Weselcouch, Tom Swanson, Ariel Kennan, Brice Lin, Abby Bouchon, Fahad Quraishi, and James Ber. Support Open Data!
+
+![NYC Tax Map Screenshot](http://33.media.tumblr.com/4d0341ee9218d0f92ee273f64f56c41a/tumblr_n1x9dzlV3R1r677bio1_1280.jpg)
